@@ -1,3 +1,5 @@
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload¨
+
+abc
