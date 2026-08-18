@@ -5,6 +5,7 @@ from app.api.router import api_router
 from app.core.config import settings
 
 app = FastAPI(title="App API")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[settings.client_origin],
@@ -12,4 +13,6 @@ app.add_middleware(
     allow_methods=["GET", "POST"],
     allow_headers=["Content-Type"],
 )
+
+# Bindet alle Routen (inklusive des neuen /images/upload Endpunkts) ein
 app.include_router(api_router)
