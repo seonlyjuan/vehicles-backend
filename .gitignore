@@ -1,0 +1,7 @@
+# Credentials and local data
+.env
+app.db
+
+# Python cache files
+__pycache__/
+*.py[cod]
