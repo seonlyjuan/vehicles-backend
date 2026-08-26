@@ -1,0 +1,10 @@
+from pydantic import BaseModel, Field
+
+
+class VehicleCreate(BaseModel):
+    title: str = Field(min_length=1, max_length=120)
+    brand: str = Field(min_length=1, max_length=80)
+    model: str | None = Field(default=None, max_length=80)
+    year: int | None = Field(default=None, ge=1886, le=2100)
+    price: float = Field(ge=0)
+    description: str | None = None

@@ -1,1 +1,1 @@
-"""Database clients and connection helpers."""
+"""Database clients."""
