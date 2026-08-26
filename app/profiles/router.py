@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 
 from app.core.auth import get_current_user_id
 from app.db.supabase import get_supabase
+from app.vehicles.service import list_profile_listings
 
 router = APIRouter(prefix="/profile", tags=["profile"])
 
@@ -15,6 +16,11 @@ class UsernameUpdate(BaseModel):
 def get_profile(user_id: str = Depends(get_current_user_id)) -> dict[str, object]:
     response = get_supabase().table("profiles").select("username").eq("id", user_id).limit(1).execute()
     return response.data[0] if response.data else {"username": None}
+
+
+@router.get("/listings")
+def get_profile_listings(user_id: str = Depends(get_current_user_id)) -> list[dict[str, object]]:
+    return list_profile_listings(user_id)
 
 
 @router.put("/username")

@@ -80,3 +80,100 @@ def list_listings(vehicle_type: str, page: int, per_page: int) -> dict[str, obje
 
     total = response.count or 0
     return {"items": items, "page": page, "per_page": per_page, "total": total, "total_pages": max(1, (total + per_page - 1) // per_page)}
+
+
+def get_listing(vehicle_type: str, vehicle_id: str) -> dict[str, object]:
+    _check_vehicle_type(vehicle_type)
+    supabase = get_supabase()
+    response = supabase.table(vehicle_type).select("*").eq("id", vehicle_id).limit(1).execute()
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Listing not found.")
+
+    item = response.data[0]
+    image_response = (
+        supabase.table("vehicle_images")
+        .select("id, storage_path, sort_order")
+        .eq("vehicle_type", vehicle_type)
+        .eq("vehicle_id", vehicle_id)
+        .order("sort_order")
+        .execute()
+    )
+    item["images"] = []
+    for image in image_response.data or []:
+        signed = supabase.storage.from_(BUCKET_NAME).create_signed_url(image["storage_path"], 3600)
+        item["images"].append({
+            "id": image["id"],
+            "url": signed.get("signedURL") or signed.get("signedUrl"),
+            "sort_order": image["sort_order"],
+        })
+    item["vehicle_type"] = vehicle_type
+    return item
+
+
+def reorder_images(vehicle_type: str, vehicle_id: str, user_id: str, image_ids: list[str]) -> list[dict[str, object]]:
+    _check_vehicle_type(vehicle_type)
+    supabase = get_supabase()
+    listing_response = (
+        supabase.table(vehicle_type)
+        .select("id")
+        .eq("id", vehicle_id)
+        .eq("profile_id", user_id)
+        .limit(1)
+        .execute()
+    )
+    if not listing_response.data:
+        raise HTTPException(status_code=403, detail="Only the listing owner can reorder its images.")
+
+    image_response = (
+        supabase.table("vehicle_images")
+        .select("id")
+        .eq("vehicle_type", vehicle_type)
+        .eq("vehicle_id", vehicle_id)
+        .eq("profile_id", user_id)
+        .execute()
+    )
+    existing_ids = {image["id"] for image in image_response.data or []}
+    if len(image_ids) != len(set(image_ids)) or set(image_ids) != existing_ids:
+        raise HTTPException(status_code=400, detail="The image order must contain every listing image exactly once.")
+
+    for sort_order, image_id in enumerate(image_ids):
+        supabase.table("vehicle_images").update({"sort_order": sort_order}).eq("id", image_id).eq("profile_id", user_id).execute()
+
+    return [{"id": image_id, "sort_order": sort_order} for sort_order, image_id in enumerate(image_ids)]
+
+
+def list_profile_listings(user_id: str) -> list[dict[str, object]]:
+    supabase = get_supabase()
+    items: list[dict[str, object]] = []
+
+    for vehicle_type in sorted(VALID_TYPES):
+        response = (
+            supabase.table(vehicle_type)
+            .select("*")
+            .eq("profile_id", user_id)
+            .execute()
+        )
+        for item in response.data or []:
+            item["vehicle_type"] = vehicle_type
+            item["images"] = []
+            items.append(item)
+
+    image_response = (
+        supabase.table("vehicle_images")
+        .select("vehicle_type, vehicle_id, storage_path, sort_order")
+        .eq("profile_id", user_id)
+        .order("sort_order")
+        .execute()
+    )
+    items_by_vehicle = {(item["vehicle_type"], item["id"]): item for item in items}
+    for image in image_response.data or []:
+        item = items_by_vehicle.get((image["vehicle_type"], image["vehicle_id"]))
+        if item is None:
+            continue
+        signed = supabase.storage.from_(BUCKET_NAME).create_signed_url(image["storage_path"], 3600)
+        item["images"].append({
+            "url": signed.get("signedURL") or signed.get("signedUrl"),
+            "sort_order": image["sort_order"],
+        })
+
+    return sorted(items, key=lambda item: item.get("created_at", ""), reverse=True)
