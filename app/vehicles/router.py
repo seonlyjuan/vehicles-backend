@@ -1,0 +1,22 @@
+from fastapi import APIRouter, Depends, File, Query, UploadFile
+
+from app.core.auth import get_current_user_id
+from app.vehicles.schemas import VehicleCreate
+from app.vehicles.service import add_images, create_listing, list_listings
+
+router = APIRouter(prefix="/vehicles", tags=["vehicles"])
+
+
+@router.get("/{vehicle_type}")
+def get_listings(vehicle_type: str, page: int = Query(default=1, ge=1), per_page: int = Query(default=30, ge=1, le=30), _: str = Depends(get_current_user_id)) -> dict[str, object]:
+    return list_listings(vehicle_type, page, per_page)
+
+
+@router.post("/{vehicle_type}")
+def post_listing(vehicle_type: str, payload: VehicleCreate, user_id: str = Depends(get_current_user_id)) -> dict[str, object]:
+    return create_listing(vehicle_type, user_id, payload.model_dump())
+
+
+@router.post("/{vehicle_type}/{vehicle_id}/images")
+async def post_images(vehicle_type: str, vehicle_id: str, files: list[UploadFile] = File(...), user_id: str = Depends(get_current_user_id)) -> list[dict[str, object]]:
+    return await add_images(vehicle_type, vehicle_id, user_id, files)
