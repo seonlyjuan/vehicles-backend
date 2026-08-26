@@ -8,3 +8,7 @@ class VehicleCreate(BaseModel):
     year: int | None = Field(default=None, ge=1886, le=2100)
     price: float = Field(ge=0)
     description: str | None = None
+
+
+class ImageOrderUpdate(BaseModel):
+    image_ids: list[str] = Field(min_length=1, max_length=6)
