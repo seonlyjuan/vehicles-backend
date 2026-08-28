@@ -6,6 +6,18 @@ from app.db.supabase import get_supabase
 
 BUCKET_NAME = "vehicles-images"
 VALID_TYPES = {"bicycles", "cars", "motorbikes"}
+VEHICLE_FILTERS = {
+    "bicycles": ("brand", "model", "price", "year"),
+    "cars": ("brand", "model", "price", "year", "power"),
+    "motorbikes": ("brand", "model", "price", "year", "power"),
+}
+FILTER_DEFINITIONS = {
+    "brand": {"name": "brand", "label": "Marke", "type": "text"},
+    "model": {"name": "model", "label": "Modell", "type": "text"},
+    "price": {"name": "price", "label": "Preis", "type": "range", "unit": "EUR", "min": 0},
+    "year": {"name": "year", "label": "Jahr", "type": "range", "min": 1886, "max": 2100},
+    "power": {"name": "power", "label": "Leistung", "type": "range", "unit": "PS", "min": 0, "max": 5000},
+}
 VALID_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
 MAX_IMAGE_BYTES = 5 * 1024 * 1024
 MAX_IMAGES = 6
@@ -19,8 +31,7 @@ def _check_vehicle_type(vehicle_type: str) -> None:
 def create_listing(vehicle_type: str, user_id: str, payload: dict[str, object]) -> dict[str, object]:
     _check_vehicle_type(vehicle_type)
     if vehicle_type == "bicycles":
-        payload.pop("model", None)
-        payload.pop("year", None)
+        payload.pop("power", None)
 
     response = get_supabase().table(vehicle_type).insert({**payload, "profile_id": user_id}).execute()
     return response.data[0]
@@ -63,11 +74,44 @@ async def add_images(vehicle_type: str, vehicle_id: str, user_id: str, files: li
     return images
 
 
-def list_listings(vehicle_type: str, page: int, per_page: int) -> dict[str, object]:
+def get_filter_metadata(vehicle_type: str) -> dict[str, object]:
     _check_vehicle_type(vehicle_type)
+    return {
+        "vehicle_type": vehicle_type,
+        "characteristics": [FILTER_DEFINITIONS[name] for name in VEHICLE_FILTERS[vehicle_type]],
+    }
+
+
+def _validate_filters(vehicle_type: str, filters: dict[str, object]) -> None:
+    allowed = VEHICLE_FILTERS[vehicle_type]
+    for name in ("price", "year", "power"):
+        minimum = filters.get(f"{name}_min")
+        maximum = filters.get(f"{name}_max")
+        if name not in allowed and (minimum is not None or maximum is not None):
+            raise HTTPException(status_code=422, detail=f"Filter '{name}' is not available for {vehicle_type}.")
+        if minimum is not None and maximum is not None and minimum > maximum:
+            raise HTTPException(status_code=422, detail=f"{name}_min must not be greater than {name}_max.")
+
+
+def list_listings(vehicle_type: str, page: int, per_page: int, filters: dict[str, object] | None = None) -> dict[str, object]:
+    _check_vehicle_type(vehicle_type)
+    filters = filters or {}
+    _validate_filters(vehicle_type, filters)
     supabase = get_supabase()
     start = (page - 1) * per_page
-    response = supabase.table(vehicle_type).select("*", count="exact").order("created_at", desc=True).range(start, start + per_page - 1).execute()
+    query = supabase.table(vehicle_type).select("*", count="exact")
+    if filters.get("brand"):
+        query = query.ilike("brand", f"%{filters['brand'].strip()}%")
+    if filters.get("model"):
+        query = query.ilike("model", f"%{filters['model'].strip()}%")
+    for name in ("price", "year", "power"):
+        if name not in VEHICLE_FILTERS[vehicle_type]:
+            continue
+        if filters.get(f"{name}_min") is not None:
+            query = query.gte(name, filters[f"{name}_min"])
+        if filters.get(f"{name}_max") is not None:
+            query = query.lte(name, filters[f"{name}_max"])
+    response = query.order("created_at", desc=True).range(start, start + per_page - 1).execute()
     items = response.data or []
 
     for item in items:
