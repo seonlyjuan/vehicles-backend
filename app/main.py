@@ -3,8 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.router import api_router
 from app.core.config import settings
+from app.core.request_limits import UploadSizeLimitMiddleware
 
 app = FastAPI(title="App API")
+
+app.add_middleware(UploadSizeLimitMiddleware)
 
 app.add_middleware(
     CORSMiddleware,

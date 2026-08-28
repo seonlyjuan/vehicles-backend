@@ -1,12 +1,11 @@
-import uuid
 from datetime import datetime, timezone
 
-from fastapi import HTTPException, UploadFile
+from fastapi import HTTPException
 
 from app.db.supabase import get_supabase
+from app.vehicles.access import VALID_TYPES, check_vehicle_type, get_owned_listing
 
 BUCKET_NAME = "vehicles-images"
-VALID_TYPES = {"bicycles", "cars", "motorbikes"}
 VEHICLE_FILTERS = {
     "bicycles": ("brand", "model", "price", "year"),
     "cars": ("brand", "model", "price", "year", "power"),
@@ -15,22 +14,14 @@ VEHICLE_FILTERS = {
 FILTER_DEFINITIONS = {
     "brand": {"name": "brand", "label": "Marke", "type": "text"},
     "model": {"name": "model", "label": "Modell", "type": "text"},
-    "price": {"name": "price", "label": "Preis", "type": "range", "unit": "EUR", "min": 0},
+    "price": {"name": "price", "label": "Preis", "type": "range", "unit": "CHF", "min": 0},
     "year": {"name": "year", "label": "Jahr", "type": "range", "min": 1886, "max": 2100},
     "power": {"name": "power", "label": "Leistung", "type": "range", "unit": "PS", "min": 0, "max": 5000},
 }
-VALID_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp"}
-MAX_IMAGE_BYTES = 5 * 1024 * 1024
-MAX_IMAGES = 6
-
-
-def _check_vehicle_type(vehicle_type: str) -> None:
-    if vehicle_type not in VALID_TYPES:
-        raise HTTPException(status_code=404, detail="Unknown vehicle type.")
 
 
 def create_listing(vehicle_type: str, user_id: str, payload: dict[str, object]) -> dict[str, object]:
-    _check_vehicle_type(vehicle_type)
+    check_vehicle_type(vehicle_type)
     if vehicle_type == "bicycles":
         payload.pop("power", None)
 
@@ -43,45 +34,8 @@ def create_listing(vehicle_type: str, user_id: str, payload: dict[str, object]) 
     return response.data[0]
 
 
-async def add_images(vehicle_type: str, vehicle_id: str, user_id: str, files: list[UploadFile]) -> list[dict[str, object]]:
-    _check_vehicle_type(vehicle_type)
-    if not files or len(files) > MAX_IMAGES:
-        raise HTTPException(status_code=400, detail=f"Upload between 1 and {MAX_IMAGES} images.")
-
-    supabase = get_supabase()
-    uploaded_paths: list[str] = []
-    images: list[dict[str, object]] = []
-    try:
-        for sort_order, file in enumerate(files):
-            if file.content_type not in VALID_IMAGE_TYPES:
-                raise HTTPException(status_code=400, detail="Only JPEG, PNG, and WebP images are allowed.")
-            content = await file.read()
-            if len(content) > MAX_IMAGE_BYTES:
-                raise HTTPException(status_code=400, detail="Each image must be at most 5 MB.")
-
-            extension = "jpg" if file.content_type == "image/jpeg" else file.content_type.split("/")[1]
-            path = f"{user_id}/{vehicle_type}/{vehicle_id}/{uuid.uuid4()}.{extension}"
-            supabase.storage.from_(BUCKET_NAME).upload(path, content, {"content-type": file.content_type})
-            uploaded_paths.append(path)
-            response = supabase.table("vehicle_images").insert({
-                "profile_id": user_id,
-                "vehicle_type": vehicle_type,
-                "vehicle_id": vehicle_id,
-                "storage_path": path,
-                "content_type": file.content_type,
-                "sort_order": sort_order,
-            }).execute()
-            images.append(response.data[0])
-    except Exception:
-        if uploaded_paths:
-            supabase.storage.from_(BUCKET_NAME).remove(uploaded_paths)
-        supabase.table("vehicle_images").delete().eq("vehicle_type", vehicle_type).eq("vehicle_id", vehicle_id).execute()
-        raise
-    return images
-
-
 def get_filter_metadata(vehicle_type: str) -> dict[str, object]:
-    _check_vehicle_type(vehicle_type)
+    check_vehicle_type(vehicle_type)
     return {
         "vehicle_type": vehicle_type,
         "characteristics": [FILTER_DEFINITIONS[name] for name in VEHICLE_FILTERS[vehicle_type]],
@@ -100,7 +54,7 @@ def _validate_filters(vehicle_type: str, filters: dict[str, object]) -> None:
 
 
 def list_listings(vehicle_type: str, page: int, per_page: int, filters: dict[str, object] | None = None) -> dict[str, object]:
-    _check_vehicle_type(vehicle_type)
+    check_vehicle_type(vehicle_type)
     filters = filters or {}
     _validate_filters(vehicle_type, filters)
     supabase = get_supabase()
@@ -133,7 +87,7 @@ def list_listings(vehicle_type: str, page: int, per_page: int, filters: dict[str
 
 
 def get_listing(vehicle_type: str, vehicle_id: str, user_id: str) -> dict[str, object]:
-    _check_vehicle_type(vehicle_type)
+    check_vehicle_type(vehicle_type)
     supabase = get_supabase()
     response = supabase.table(vehicle_type).select("*").eq("id", vehicle_id).limit(1).execute()
     if not response.data:
@@ -162,30 +116,14 @@ def get_listing(vehicle_type: str, vehicle_id: str, user_id: str) -> dict[str, o
     return item
 
 
-def _get_owned_listing(vehicle_type: str, vehicle_id: str, user_id: str) -> dict[str, object]:
-    _check_vehicle_type(vehicle_type)
-    response = (
-        get_supabase()
-        .table(vehicle_type)
-        .select("*")
-        .eq("id", vehicle_id)
-        .eq("profile_id", user_id)
-        .limit(1)
-        .execute()
-    )
-    if not response.data:
-        raise HTTPException(status_code=404, detail="Listing not found.")
-    return response.data[0]
-
-
 def is_payment_successful(vehicle_type: str, listing: dict[str, object]) -> bool:
     """Temporary Payrexx placeholder. Replace this body with verified payment data."""
-    _check_vehicle_type(vehicle_type)
+    check_vehicle_type(vehicle_type)
     return True
 
 
 def get_payment_status(vehicle_type: str, vehicle_id: str, user_id: str) -> dict[str, object]:
-    listing = _get_owned_listing(vehicle_type, vehicle_id, user_id)
+    listing = get_owned_listing(vehicle_type, vehicle_id, user_id)
     successful = listing.get("payment_status") == "paid" or is_payment_successful(vehicle_type, listing)
 
     if successful and listing.get("payment_status") != "paid":
@@ -195,7 +133,7 @@ def get_payment_status(vehicle_type: str, vehicle_id: str, user_id: str) -> dict
 
 
 def publish_listing(vehicle_type: str, vehicle_id: str, user_id: str) -> dict[str, object]:
-    listing = _get_owned_listing(vehicle_type, vehicle_id, user_id)
+    listing = get_owned_listing(vehicle_type, vehicle_id, user_id)
     if listing.get("status") == "active":
         return listing
     if listing.get("status") != "draft":
@@ -218,38 +156,6 @@ def publish_listing(vehicle_type: str, vehicle_id: str, user_id: str) -> dict[st
     if not response.data:
         raise HTTPException(status_code=409, detail="Listing could not be published.")
     return response.data[0]
-
-
-def reorder_images(vehicle_type: str, vehicle_id: str, user_id: str, image_ids: list[str]) -> list[dict[str, object]]:
-    _check_vehicle_type(vehicle_type)
-    supabase = get_supabase()
-    listing_response = (
-        supabase.table(vehicle_type)
-        .select("id")
-        .eq("id", vehicle_id)
-        .eq("profile_id", user_id)
-        .limit(1)
-        .execute()
-    )
-    if not listing_response.data:
-        raise HTTPException(status_code=403, detail="Only the listing owner can reorder its images.")
-
-    image_response = (
-        supabase.table("vehicle_images")
-        .select("id")
-        .eq("vehicle_type", vehicle_type)
-        .eq("vehicle_id", vehicle_id)
-        .eq("profile_id", user_id)
-        .execute()
-    )
-    existing_ids = {image["id"] for image in image_response.data or []}
-    if len(image_ids) != len(set(image_ids)) or set(image_ids) != existing_ids:
-        raise HTTPException(status_code=400, detail="The image order must contain every listing image exactly once.")
-
-    for sort_order, image_id in enumerate(image_ids):
-        supabase.table("vehicle_images").update({"sort_order": sort_order}).eq("id", image_id).eq("profile_id", user_id).execute()
-
-    return [{"id": image_id, "sort_order": sort_order} for sort_order, image_id in enumerate(image_ids)]
 
 
 def list_profile_listings(user_id: str) -> list[dict[str, object]]:
