@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime, timezone
 
 from fastapi import HTTPException, UploadFile
 
@@ -33,7 +34,12 @@ def create_listing(vehicle_type: str, user_id: str, payload: dict[str, object]) 
     if vehicle_type == "bicycles":
         payload.pop("power", None)
 
-    response = get_supabase().table(vehicle_type).insert({**payload, "profile_id": user_id}).execute()
+    response = get_supabase().table(vehicle_type).insert({
+        **payload,
+        "profile_id": user_id,
+        "status": "draft",
+        "payment_status": "pending",
+    }).execute()
     return response.data[0]
 
 
@@ -99,7 +105,7 @@ def list_listings(vehicle_type: str, page: int, per_page: int, filters: dict[str
     _validate_filters(vehicle_type, filters)
     supabase = get_supabase()
     start = (page - 1) * per_page
-    query = supabase.table(vehicle_type).select("*", count="exact")
+    query = supabase.table(vehicle_type).select("*", count="exact").eq("status", "active")
     if filters.get("brand"):
         query = query.ilike("brand", f"%{filters['brand'].strip()}%")
     if filters.get("model"):
@@ -126,7 +132,7 @@ def list_listings(vehicle_type: str, page: int, per_page: int, filters: dict[str
     return {"items": items, "page": page, "per_page": per_page, "total": total, "total_pages": max(1, (total + per_page - 1) // per_page)}
 
 
-def get_listing(vehicle_type: str, vehicle_id: str) -> dict[str, object]:
+def get_listing(vehicle_type: str, vehicle_id: str, user_id: str) -> dict[str, object]:
     _check_vehicle_type(vehicle_type)
     supabase = get_supabase()
     response = supabase.table(vehicle_type).select("*").eq("id", vehicle_id).limit(1).execute()
@@ -134,6 +140,8 @@ def get_listing(vehicle_type: str, vehicle_id: str) -> dict[str, object]:
         raise HTTPException(status_code=404, detail="Listing not found.")
 
     item = response.data[0]
+    if item.get("status") != "active" and item.get("profile_id") != user_id:
+        raise HTTPException(status_code=404, detail="Listing not found.")
     image_response = (
         supabase.table("vehicle_images")
         .select("id, storage_path, sort_order")
@@ -152,6 +160,64 @@ def get_listing(vehicle_type: str, vehicle_id: str) -> dict[str, object]:
         })
     item["vehicle_type"] = vehicle_type
     return item
+
+
+def _get_owned_listing(vehicle_type: str, vehicle_id: str, user_id: str) -> dict[str, object]:
+    _check_vehicle_type(vehicle_type)
+    response = (
+        get_supabase()
+        .table(vehicle_type)
+        .select("*")
+        .eq("id", vehicle_id)
+        .eq("profile_id", user_id)
+        .limit(1)
+        .execute()
+    )
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Listing not found.")
+    return response.data[0]
+
+
+def is_payment_successful(vehicle_type: str, listing: dict[str, object]) -> bool:
+    """Temporary Payrexx placeholder. Replace this body with verified payment data."""
+    _check_vehicle_type(vehicle_type)
+    return True
+
+
+def get_payment_status(vehicle_type: str, vehicle_id: str, user_id: str) -> dict[str, object]:
+    listing = _get_owned_listing(vehicle_type, vehicle_id, user_id)
+    successful = listing.get("payment_status") == "paid" or is_payment_successful(vehicle_type, listing)
+
+    if successful and listing.get("payment_status") != "paid":
+        get_supabase().table(vehicle_type).update({"payment_status": "paid"}).eq("id", vehicle_id).eq("profile_id", user_id).execute()
+
+    return {"successful": successful, "payment_status": "paid" if successful else "pending"}
+
+
+def publish_listing(vehicle_type: str, vehicle_id: str, user_id: str) -> dict[str, object]:
+    listing = _get_owned_listing(vehicle_type, vehicle_id, user_id)
+    if listing.get("status") == "active":
+        return listing
+    if listing.get("status") != "draft":
+        raise HTTPException(status_code=409, detail="Only draft listings can be published.")
+    if listing.get("payment_status") != "paid" and not is_payment_successful(vehicle_type, listing):
+        raise HTTPException(status_code=402, detail="Payment has not been completed.")
+
+    response = (
+        get_supabase()
+        .table(vehicle_type)
+        .update({
+            "status": "active",
+            "payment_status": "paid",
+            "paid_at": datetime.now(timezone.utc).isoformat(),
+        })
+        .eq("id", vehicle_id)
+        .eq("profile_id", user_id)
+        .execute()
+    )
+    if not response.data:
+        raise HTTPException(status_code=409, detail="Listing could not be published.")
+    return response.data[0]
 
 
 def reorder_images(vehicle_type: str, vehicle_id: str, user_id: str, image_ids: list[str]) -> list[dict[str, object]]:

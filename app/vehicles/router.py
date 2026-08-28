@@ -2,7 +2,16 @@ from fastapi import APIRouter, Depends, File, Query, UploadFile
 
 from app.core.auth import get_current_user_id
 from app.vehicles.schemas import ImageOrderUpdate, VehicleCreate
-from app.vehicles.service import add_images, create_listing, get_filter_metadata, get_listing, list_listings, reorder_images
+from app.vehicles.service import (
+    add_images,
+    create_listing,
+    get_filter_metadata,
+    get_listing,
+    get_payment_status,
+    list_listings,
+    publish_listing,
+    reorder_images,
+)
 
 router = APIRouter(prefix="/vehicles", tags=["vehicles"])
 
@@ -41,8 +50,18 @@ def get_listing_filters(vehicle_type: str, _: str = Depends(get_current_user_id)
 
 
 @router.get("/{vehicle_type}/{vehicle_id}")
-def get_listing_detail(vehicle_type: str, vehicle_id: str, _: str = Depends(get_current_user_id)) -> dict[str, object]:
-    return get_listing(vehicle_type, vehicle_id)
+def get_listing_detail(vehicle_type: str, vehicle_id: str, user_id: str = Depends(get_current_user_id)) -> dict[str, object]:
+    return get_listing(vehicle_type, vehicle_id, user_id)
+
+
+@router.get("/{vehicle_type}/{vehicle_id}/payment-status")
+def get_listing_payment_status(vehicle_type: str, vehicle_id: str, user_id: str = Depends(get_current_user_id)) -> dict[str, object]:
+    return get_payment_status(vehicle_type, vehicle_id, user_id)
+
+
+@router.post("/{vehicle_type}/{vehicle_id}/publish")
+def post_publish_listing(vehicle_type: str, vehicle_id: str, user_id: str = Depends(get_current_user_id)) -> dict[str, object]:
+    return publish_listing(vehicle_type, vehicle_id, user_id)
 
 
 @router.post("/{vehicle_type}")
