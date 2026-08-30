@@ -1,36 +1,53 @@
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel, Field
+from fastapi import APIRouter, Depends, Response
 
-from app.core.auth import get_current_user_id
-from app.db.supabase import get_supabase
-from app.vehicles.service import list_profile_listings
+from app.core.security.authentication import require_recent_authentication
+from app.profiles.account_service import delete_account, export_account_data
+from app.profiles.rate_limits import (
+    delete_limited_user,
+    export_limited_user,
+    read_limited_user,
+    update_limited_user,
+)
+from app.profiles.schemas import AccountDeletionRequest, SellerProfileUpdate, UsernameUpdate
+from app.profiles.service import get_profile, update_seller_profile, update_username
+from app.vehicles.listing_service import list_profile_listings
 
 router = APIRouter(prefix="/profile", tags=["profile"])
 
 
-class UsernameUpdate(BaseModel):
-    username: str = Field(pattern=r"^[a-zA-Z0-9_]{3,30}$")
-
-
 @router.get("")
-def get_profile(user_id: str = Depends(get_current_user_id)) -> dict[str, object]:
-    response = get_supabase().table("profiles").select("username").eq("id", user_id).limit(1).execute()
-    return response.data[0] if response.data else {"username": None}
+def get_current_profile(user_id: str = Depends(read_limited_user)) -> dict[str, object]:
+    return get_profile(user_id)
 
 
 @router.get("/listings")
-def get_profile_listings(user_id: str = Depends(get_current_user_id)) -> list[dict[str, object]]:
+def get_profile_listings(user_id: str = Depends(read_limited_user)) -> list[dict[str, object]]:
     return list_profile_listings(user_id)
 
 
 @router.put("/username")
-def update_username(payload: UsernameUpdate, user_id: str = Depends(get_current_user_id)) -> dict[str, str]:
-    try:
-        response = get_supabase().table("profiles").upsert(
-            {"id": user_id, "username": payload.username.lower()}, on_conflict="id"
-        ).execute()
-    except Exception as exc:
-        if "23505" in str(exc):
-            raise HTTPException(status_code=409, detail="Dieser Username ist bereits vergeben.") from exc
-        raise
-    return {"username": response.data[0]["username"]}
+def put_username(payload: UsernameUpdate, user_id: str = Depends(update_limited_user)) -> dict[str, str]:
+    return update_username(user_id, payload.username)
+
+
+@router.put("/seller")
+def put_seller_profile(
+    payload: SellerProfileUpdate,
+    user_id: str = Depends(update_limited_user),
+) -> dict[str, object]:
+    return update_seller_profile(user_id, payload)
+
+
+@router.get("/export")
+def get_account_export(user_id: str = Depends(export_limited_user)) -> dict[str, object]:
+    return export_account_data(user_id)
+
+
+@router.delete("", status_code=204)
+def delete_current_account(
+    _: AccountDeletionRequest,
+    user_id: str = Depends(delete_limited_user),
+    __: str = Depends(require_recent_authentication),
+) -> Response:
+    delete_account(user_id)
+    return Response(status_code=204)

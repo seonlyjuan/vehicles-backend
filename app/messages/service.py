@@ -3,6 +3,9 @@ from datetime import datetime, timezone
 from fastapi import HTTPException
 
 from app.db.supabase import get_supabase
+from app.messages.access import get_participating_conversation
+from app.messages.schemas import MAX_MESSAGE_LENGTH
+from app.safety.access import ensure_users_can_interact
 from app.vehicles.access import check_vehicle_type
 
 MAX_CONVERSATIONS = 50
@@ -23,6 +26,7 @@ def start_conversation(vehicle_type: str, listing_id: str, buyer_id: str) -> dic
     seller_id = listing["profile_id"]
     if seller_id == buyer_id:
         raise HTTPException(status_code=400, detail="You cannot contact yourself about your own listing.")
+    ensure_users_can_interact(buyer_id, seller_id)
 
     existing = (
         supabase.table("conversations").select("*")
@@ -30,7 +34,14 @@ def start_conversation(vehicle_type: str, listing_id: str, buyer_id: str) -> dic
         .eq("buyer_id", buyer_id).eq("seller_id", seller_id).limit(1).execute()
     )
     if existing.data:
-        return existing.data[0]
+        conversation = existing.data[0]
+        if conversation.get("status") == "closed":
+            reopened = supabase.table("conversations").update({
+                "status": "active",
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+            }).eq("id", conversation["id"]).execute()
+            return reopened.data[0]
+        return conversation
 
     response = supabase.table("conversations").insert({
         "vehicle_type": vehicle_type,
@@ -51,7 +62,7 @@ def list_conversations(user_id: str) -> list[dict[str, object]]:
 
 
 def get_messages(conversation_id: str, user_id: str) -> dict[str, object]:
-    conversation = _get_participating_conversation(conversation_id, user_id)
+    conversation = get_participating_conversation(conversation_id, user_id)
     response = (
         get_supabase().table("messages").select("id, sender_id, content, created_at")
         .eq("conversation_id", conversation_id).order("created_at", desc=True)
@@ -61,14 +72,18 @@ def get_messages(conversation_id: str, user_id: str) -> dict[str, object]:
     return {
         "conversation": _enrich_conversations([conversation], user_id)[0],
         "messages": list(reversed(response.data or [])),
-        "max_message_length": 1000,
+        "max_message_length": MAX_MESSAGE_LENGTH,
     }
 
 
 def send_message(conversation_id: str, user_id: str, content: str) -> dict[str, object]:
-    conversation = _get_participating_conversation(conversation_id, user_id)
+    conversation = get_participating_conversation(conversation_id, user_id)
     if conversation.get("status") != "active":
         raise HTTPException(status_code=409, detail="This conversation is closed.")
+    other_user_id = conversation["seller_id"] if conversation["buyer_id"] == user_id else conversation["buyer_id"]
+    if not other_user_id:
+        raise HTTPException(status_code=409, detail="Das andere Konto wurde gelöscht.")
+    ensure_users_can_interact(user_id, other_user_id)
 
     supabase = get_supabase()
     response = supabase.table("messages").insert({
@@ -80,20 +95,6 @@ def send_message(conversation_id: str, user_id: str, content: str) -> dict[str, 
         "updated_at": datetime.now(timezone.utc).isoformat(),
     }).eq("id", conversation_id).execute()
     return response.data[0]
-
-
-def _get_participating_conversation(conversation_id: str, user_id: str) -> dict[str, object]:
-    response = (
-        get_supabase().table("conversations").select("*")
-        .eq("id", conversation_id).limit(1).execute()
-    )
-    if not response.data:
-        raise HTTPException(status_code=404, detail="Conversation not found.")
-
-    conversation = response.data[0]
-    if user_id not in (conversation["buyer_id"], conversation["seller_id"]):
-        raise HTTPException(status_code=404, detail="Conversation not found.")
-    return conversation
 
 
 def _enrich_conversations(
@@ -109,15 +110,15 @@ def _enrich_conversations(
         if conversation["buyer_id"] == user_id
         else conversation["buyer_id"]
         for conversation in conversations
+        if (conversation["seller_id"] if conversation["buyer_id"] == user_id else conversation["buyer_id"])
     }
     profile_response = (
         supabase.table("profiles").select("id, username")
         .in_("id", list(other_user_ids)).execute()
+        if other_user_ids else None
     )
-    usernames = {
-        profile["id"]: profile.get("username")
-        for profile in profile_response.data or []
-    }
+    profiles = profile_response.data or [] if profile_response else []
+    usernames = {profile["id"]: profile.get("username") for profile in profiles}
 
     listing_titles: dict[tuple[str, object], str | None] = {}
     vehicle_types = {str(conversation["vehicle_type"]) for conversation in conversations}
@@ -157,6 +158,7 @@ def _enrich_conversations(
         listing_key = (str(conversation["vehicle_type"]), conversation["listing_id"])
         result.append({
             **conversation,
+            "other_user_id": other_user_id,
             "other_user": usernames.get(other_user_id),
             "listing_title": listing_titles.get(listing_key) or "Gelöschtes Inserat",
             "has_unread": conversation["id"] in unread_conversation_ids,
