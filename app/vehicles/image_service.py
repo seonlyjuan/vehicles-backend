@@ -4,9 +4,9 @@ from fastapi import HTTPException, UploadFile
 
 from app.db.supabase import get_supabase
 from app.vehicles.access import check_vehicle_type, get_owned_listing
+from app.vehicles.constants import BUCKET_NAME
 from app.vehicles.image_validation import MAX_IMAGES, prepare_images
-
-BUCKET_NAME = "vehicles-images"
+from app.vehicles.storage_service import remove_vehicle_files
 
 
 async def add_images(vehicle_type: str, vehicle_id: str, user_id: str, files: list[UploadFile]) -> list[dict[str, object]]:
@@ -40,7 +40,7 @@ async def add_images(vehicle_type: str, vehicle_id: str, user_id: str, files: li
             images.append(response.data[0])
     except Exception:
         if uploaded_paths:
-            supabase.storage.from_(BUCKET_NAME).remove(uploaded_paths)
+            remove_vehicle_files(uploaded_paths)
         for image in images:
             supabase.table("vehicle_images").delete().eq("id", image["id"]).eq("profile_id", user_id).execute()
         raise
@@ -61,3 +61,21 @@ def reorder_images(vehicle_type: str, vehicle_id: str, user_id: str, image_ids: 
     for sort_order, image_id in enumerate(image_ids):
         supabase.table("vehicle_images").update({"sort_order": sort_order}).eq("id", image_id).eq("profile_id", user_id).execute()
     return [{"id": image_id, "sort_order": sort_order} for sort_order, image_id in enumerate(image_ids)]
+
+
+def delete_listing_images(vehicle_type: str, vehicle_id: str, user_id: str) -> None:
+    get_owned_listing(vehicle_type, vehicle_id, user_id)
+    supabase = get_supabase()
+    response = (
+        supabase.table("vehicle_images").select("id, storage_path")
+        .eq("vehicle_type", vehicle_type).eq("vehicle_id", vehicle_id)
+        .eq("profile_id", user_id).execute()
+    )
+    images = response.data or []
+    paths = [image["storage_path"] for image in images]
+    if paths:
+        remove_vehicle_files(paths)
+    if images:
+        supabase.table("vehicle_images").delete().eq("vehicle_type", vehicle_type).eq(
+            "vehicle_id", vehicle_id
+        ).eq("profile_id", user_id).execute()

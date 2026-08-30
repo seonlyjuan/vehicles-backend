@@ -1,8 +1,7 @@
 from fastapi import HTTPException
 
 from app.db.supabase import get_supabase
-
-VALID_TYPES = {"bicycles", "cars", "motorbikes"}
+from app.vehicles.constants import VALID_TYPES
 
 
 def check_vehicle_type(vehicle_type: str) -> None:

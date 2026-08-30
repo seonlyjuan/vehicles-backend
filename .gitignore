@@ -5,3 +5,8 @@ app.db
 # Python cache files
 __pycache__/
 *.py[cod]
+
+# Node/Supabase CLI local files
+node_modules/
+.temp/
+supabase/.temp/

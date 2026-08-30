@@ -49,6 +49,24 @@ create table if not exists public.vehicle_images (
   created_at timestamptz not null default now()
 );
 
+insert into storage.buckets (
+  id,
+  name,
+  public,
+  file_size_limit,
+  allowed_mime_types
+) values (
+  'vehicles-images',
+  'vehicles-images',
+  false,
+  12582912,
+  array['image/jpeg']
+)
+on conflict (id) do update
+set public = excluded.public,
+    file_size_limit = excluded.file_size_limit,
+    allowed_mime_types = excluded.allowed_mime_types;
+
 create index if not exists vehicle_images_vehicle_idx
 on public.vehicle_images (vehicle_type, vehicle_id, sort_order);
 

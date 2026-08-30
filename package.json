@@ -1,0 +1,15 @@
+{
+  "name": "vehicle-platform-database",
+  "private": true,
+  "scripts": {
+    "db:login": "supabase login",
+    "db:link": "supabase link",
+    "db:new": "supabase migration new",
+    "db:migrations": "supabase migration list",
+    "db:check": "supabase db push --dry-run",
+    "db:push": "supabase db push"
+  },
+  "devDependencies": {
+    "supabase": "2.116.0"
+  }
+}
