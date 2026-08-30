@@ -16,6 +16,21 @@ class PostalCodeImportTests(unittest.TestCase):
                 "canton": "ZH",
             }])
 
+    def test_reads_current_plz4_header_and_excludes_liechtenstein(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "postal_codes.csv"
+            path.write_text(
+                "Ortschaftsname;PLZ4;Kantonskürzel\n"
+                "Lausanne;1000;VD\n"
+                "Vaduz;9490;FL\n",
+                encoding="utf-8",
+            )
+            self.assertEqual(read_records(path), [{
+                "postal_code": "1000",
+                "locality": "Lausanne",
+                "canton": "VD",
+            }])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -5,9 +5,15 @@ from pathlib import Path
 from app.db.supabase import get_supabase
 
 FIELD_ALIASES = {
-    "postal_code": ("postal_code", "plz", "postleitzahl"),
+    "postal_code": ("postal_code", "plz", "plz4", "postleitzahl"),
     "locality": ("locality", "ortschaftsname", "ortschaft", "ortsbez18"),
     "canton": ("canton", "kanton", "kantonskuerzel", "kantonskürzel"),
+}
+
+SWISS_CANTONS = {
+    "AG", "AI", "AR", "BE", "BL", "BS", "FR", "GE", "GL", "GR", "JU",
+    "LU", "NE", "NW", "OW", "SG", "SH", "SO", "SZ", "TG", "TI", "UR",
+    "VD", "VS", "ZG", "ZH",
 }
 
 
@@ -28,15 +34,13 @@ def read_records(path: Path) -> list[dict[str, str]]:
     reader = csv.DictReader(text.splitlines(), dialect=dialect)
     headers = reader.fieldnames or []
     fields = {name: _find_field(headers, aliases) for name, aliases in FIELD_ALIASES.items()}
-    unique_rows = {
-        (
-            row[fields["postal_code"]].strip(),
-            row[fields["locality"]].strip(),
-            row[fields["canton"]].strip().upper(),
-        )
-        for row in reader
-        if row.get(fields["postal_code"]) and row.get(fields["locality"]) and row.get(fields["canton"])
-    }
+    unique_rows = set()
+    for row in reader:
+        postal_code = row.get(fields["postal_code"], "").strip()
+        locality = row.get(fields["locality"], "").strip()
+        canton = row.get(fields["canton"], "").strip().upper()
+        if postal_code and locality and canton in SWISS_CANTONS:
+            unique_rows.add((postal_code, locality, canton))
     return [
         {"postal_code": postal_code, "locality": locality, "canton": canton}
         for postal_code, locality, canton in sorted(unique_rows)

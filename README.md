@@ -118,8 +118,9 @@ swisstopo/opendata.swiss herunterladen und danach im Server-Ordner importieren:
 ..\.venv\Scripts\python.exe -m scripts.import_swiss_postal_codes C:\Pfad\AMTOVZ_CSV.csv
 ```
 
-Der Import erkennt deutsche Spaltennamen wie `PLZ`, `Ortschaftsname` und
-`Kantonskürzel` und kann bei einem aktualisierten Datensatz erneut laufen.
+Der Import erkennt deutsche Spaltennamen wie `PLZ`, `PLZ4`, `Ortschaftsname`
+und `Kantonskürzel`, übernimmt nur die 26 Schweizer Kantone und kann bei einem
+aktualisierten Datensatz erneut laufen.
 
 ## Regelmässige Aufbewahrungs- und Löschjobs
 
