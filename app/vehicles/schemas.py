@@ -42,5 +42,10 @@ class ListingStatusUpdate(BaseModel):
     action: Literal["archive", "reactivate", "mark_sold"]
 
 
+class ListingPublishRequest(BaseModel):
+    terms_version: str = Field(min_length=1, max_length=40)
+    terms_accepted: Literal[True]
+
+
 class ImageOrderUpdate(BaseModel):
     image_ids: list[str] = Field(min_length=1, max_length=6)

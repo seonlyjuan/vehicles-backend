@@ -11,6 +11,7 @@ READ_NOTIFICATION_RETENTION_DAYS = 90
 RESOLVED_REPORT_RETENTION_DAYS = 3 * 365
 MODERATION_AUDIT_RETENTION_DAYS = 3 * 365
 PAYMENT_RECORD_RETENTION_DAYS = 10 * 365 + 3
+LEGAL_ACCEPTANCE_RETENTION_DAYS = 10 * 365 + 3
 
 
 def run_retention_cleanup(now: datetime | None = None) -> dict[str, int]:
@@ -25,6 +26,7 @@ def run_retention_cleanup(now: datetime | None = None) -> dict[str, int]:
         "purged_reports": 0,
         "purged_moderation_actions": 0,
         "purged_payment_records": 0,
+        "purged_legal_acceptances": 0,
     }
     supabase = get_supabase()
 
@@ -111,6 +113,13 @@ def run_retention_cleanup(now: datetime | None = None) -> dict[str, int]:
         .lte("created_at", payment_cutoff.isoformat()).execute()
     )
     result["purged_payment_records"] = len(payments.data or [])
+
+    acceptance_cutoff = current - timedelta(days=LEGAL_ACCEPTANCE_RETENTION_DAYS)
+    acceptances = (
+        supabase.table("legal_acceptances").delete()
+        .lte("accepted_at", acceptance_cutoff.isoformat()).execute()
+    )
+    result["purged_legal_acceptances"] = len(acceptances.data or [])
     return result
 
 

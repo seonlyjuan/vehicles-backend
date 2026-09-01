@@ -4,6 +4,7 @@ from fastapi import HTTPException
 
 from app.core.config import settings
 from app.db.supabase import get_supabase
+from app.legal.service import record_listing_terms_acceptance
 from app.locations.service import validate_swiss_location
 from app.vehicles.access import get_owned_listing
 from app.vehicles.image_service import delete_listing_images
@@ -77,7 +78,12 @@ def change_listing_status(
     return response.data[0]
 
 
-def publish_listing(vehicle_type: str, vehicle_id: str, user_id: str) -> dict[str, object]:
+def publish_listing(
+    vehicle_type: str,
+    vehicle_id: str,
+    user_id: str,
+    terms_version: str,
+) -> dict[str, object]:
     listing = get_owned_listing(vehicle_type, vehicle_id, user_id)
     if listing.get("status") == "active":
         return listing
@@ -85,6 +91,7 @@ def publish_listing(vehicle_type: str, vehicle_id: str, user_id: str) -> dict[st
         raise HTTPException(status_code=409, detail="Only draft listings can be published.")
     _ensure_seller_can_publish(user_id)
     ensure_payment_completed(vehicle_type, vehicle_id, user_id)
+    record_listing_terms_acceptance(user_id, vehicle_type, vehicle_id, terms_version)
     now = datetime.now(timezone.utc)
     response = (
         get_supabase().table(vehicle_type).update({

@@ -12,7 +12,9 @@ MAX_TOTAL_BYTES = MAX_IMAGES * MAX_IMAGE_BYTES
 MAX_IMAGE_PIXELS = 50_000_000
 MAX_IMAGE_SIDE = 2560
 OUTPUT_QUALITY = 85
-SUPPORTED_FORMATS = {"JPEG", "PNG", "WEBP", "HEIF"}
+# Pillow identifies some smartphone JPEGs (HDR, portrait or motion photos) as
+# MPO even when the file uses a .jpg/.jpeg extension.
+SUPPORTED_FORMATS = {"JPEG", "MPO", "PNG", "WEBP", "HEIF", "AVIF"}
 
 register_heif_opener()
 
@@ -52,7 +54,10 @@ def _process_image(content: bytes) -> ProcessedImage:
             warnings.simplefilter("error", Image.DecompressionBombWarning)
             with Image.open(BytesIO(content)) as source:
                 if source.format not in SUPPORTED_FORMATS:
-                    raise HTTPException(status_code=400, detail="Only JPEG, PNG, WebP, HEIC, and HEIF images are allowed.")
+                    raise HTTPException(
+                        status_code=400,
+                        detail="Erlaubt sind JPEG-, Smartphone-JPEG-, PNG-, WebP-, AVIF-, HEIC- und HEIF-Bilder.",
+                    )
                 if source.width * source.height > MAX_IMAGE_PIXELS:
                     raise HTTPException(status_code=413, detail="The image resolution is too large.")
                 image = ImageOps.exif_transpose(source)

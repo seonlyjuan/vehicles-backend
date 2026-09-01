@@ -31,5 +31,9 @@ class Settings:
         ).split(",") if host.strip()
     )
 
+    @property
+    def is_production(self) -> bool:
+        return self.environment.lower() == "production"
+
 
 settings = Settings()

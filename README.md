@@ -140,9 +140,24 @@ Launch mit der Datenschutzerklärung abgestimmt werden.
 - `APP_ENV=production` deaktiviert den Zahlungsplatzhalter zwingend.
 - `APP_ENV=production` aktiviert standardmässig HTTPS-Weiterleitung und schaltet
   die lokale WLAN-CORS-Regel ab.
+- Die interaktive API-Dokumentation wird in Produktion deaktiviert und die API
+  liefert eine restriktive Content Security Policy aus.
 - `ALLOWED_HOSTS` muss auf die produktive API-Domain gesetzt werden.
 - `REDIS_URL` aktiviert einen gemeinsamen Rate Limiter für mehrere API-Instanzen.
 - Ein Admin wird ausschliesslich direkt in der Datenbank über
   `profiles.platform_role = 'admin'` freigeschaltet, niemals über den Client.
 - Payrexx ist noch nicht angebunden. In Produktion bleibt die Veröffentlichung
   deshalb gesperrt, bis ein signaturgeprüfter Payrexx-Webhook implementiert ist.
+
+## AGB-Zustimmung bei Inseraten
+
+Vor der Veröffentlichung muss der Nutzer die vom Server gemeldete aktuelle
+AGB-Version ausdrücklich bestätigen. Die Veröffentlichung und Protokollierung
+erfolgen gemeinsam über `POST /vehicles/{vehicle_type}/{vehicle_id}/publish`.
+Die Datenbank speichert Nutzer, Inserat, Fahrzeugtyp, Dokumentversion und den
+serverseitigen Zeitpunkt in `legal_acceptances`.
+
+Die aktuell eingetragene Version `0.1-draft` dient nur der Entwicklung. Vor dem
+produktiven Betrieb müssen alle Platzhalter ersetzt, die AGB rechtlich geprüft
+und über eine neue Migration als `published` versioniert werden. Produktion
+verweigert die Veröffentlichung mit einer AGB-Version im Status `draft`.

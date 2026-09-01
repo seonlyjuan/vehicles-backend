@@ -8,9 +8,14 @@ from app.core.security.headers import SecurityHeadersMiddleware
 from app.core.security.request_limits import UploadSizeLimitMiddleware
 from app.router import api_router
 
-app = FastAPI(title="App API")
+app = FastAPI(
+    title="App API",
+    docs_url=None if settings.is_production else "/docs",
+    redoc_url=None if settings.is_production else "/redoc",
+    openapi_url=None if settings.is_production else "/openapi.json",
+)
 
-app.add_middleware(SecurityHeadersMiddleware)
+app.add_middleware(SecurityHeadersMiddleware, is_production=settings.is_production)
 app.add_middleware(UploadSizeLimitMiddleware)
 app.add_middleware(TrustedHostMiddleware, allowed_hosts=list(settings.allowed_hosts))
 if settings.enforce_https:

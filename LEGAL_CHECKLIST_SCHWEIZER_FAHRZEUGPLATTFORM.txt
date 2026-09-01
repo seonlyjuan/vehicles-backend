@@ -1,0 +1,771 @@
+RECHTLICHE UND ORGANISATORISCHE LAUNCH-CHECKLISTE
+SCHWEIZER FAHRZEUG-INSERATEPLATTFORM
+
+Stand: 30.08.2026
+
+WICHTIGER HINWEIS
+==================
+
+Diese Datei ist eine Arbeits- und Umsetzungscheckliste, keine individuelle
+Rechts- oder Steuerberatung. Vor dem öffentlichen und insbesondere vor dem
+bezahlten Betrieb sollten die endgültigen Rechtstexte und das konkrete
+Geschäftsmodell von einer Schweizer Fachperson für IT-, Datenschutz- und
+Konsumentenrecht geprüft werden. Falls Nutzer aus der EU gezielt zugelassen
+oder beworben werden, ist zusätzlich eine EU-rechtliche Prüfung erforderlich.
+
+
+1. ANGENOMMENES GESCHÄFTSMODELL
+===============================
+
+- Betreiber und geschäftliche Ausrichtung befinden sich in der Schweiz.
+- Fahrzeuge müssen sich grundsätzlich in der Schweiz befinden.
+- Private Verkäufer und Schweizer Fahrzeughändler dürfen Inserate erstellen.
+- Der Betreiber verkauft keine Fahrzeuge und wird nicht Partei des
+  Fahrzeugkaufvertrags.
+- Interessenten kontaktieren Verkäufer über das interne Nachrichtensystem.
+- Besichtigung, Verhandlung, Bezahlung, Übergabe und Fahrzeugkaufvertrag
+  erfolgen ausserhalb der Plattform direkt zwischen Käufer und Verkäufer.
+- Die Plattform verlangt später eine Gebühr für die Veröffentlichung eines
+  Inserats und nutzt dafür Payrexx/TWINT.
+- Die Website ist weltweit technisch erreichbar, richtet Werbung, Preise,
+  Angebot und Kundenservice aber grundsätzlich auf die Schweiz aus.
+
+Wenn sich dieses Modell ändert, insbesondere durch einen Kaufen-Button,
+Treuhandzahlung, Fahrzeugzahlung über die Plattform, Provision am Fahrzeugkauf,
+Lieferorganisation, Garantie oder eigene Fahrzeugprüfung, muss die rechtliche
+Beurteilung neu durchgeführt werden.
+
+
+2. PRIORITÄTEN
+==============
+
+P0 = vor dem öffentlichen oder bezahlten Start erledigen
+P1 = spätestens in der frühen öffentlichen Betriebsphase erledigen
+P2 = bei Wachstum, neuen Funktionen oder erhöhtem Risiko ausbauen
+
+
+3. SCHWEIZ ODER EU: DIE ENTSCHEIDENDE GRENZE
+=============================================
+
+[P0] Schweizer Zielmarkt sichtbar festlegen
+
+Empfohlene Umsetzung:
+
+- .ch-Domain verwenden.
+- Preise ausschliesslich in CHF anzeigen.
+- Inserate nur für Fahrzeuge mit Standort in der Schweiz zulassen.
+- Standort über Schweizer Kanton und Schweizer Postleitzahl erfassen.
+- Inserenten und Händler nur mit Schweizer Kontakt-/Geschäftsadresse zulassen.
+- Keine Werbung speziell in Deutschland, Österreich oder anderen EU-Staaten.
+- Keine .de- oder .eu-Domain, keine EUR-Preise und keinen EU-Kundenservice
+  bewerben.
+- In Nutzungsbedingungen und Footer schreiben:
+  "Die Plattform richtet sich primär an Nutzerinnen und Nutzer in der Schweiz
+  und an Fahrzeuge mit Standort in der Schweiz."
+
+Die reine technische Abrufbarkeit in Deutschland führt nicht automatisch zur
+Anwendung sämtlicher EU-Regeln. Die bewusste und wiederholte Zulassung von
+Personen in der EU als registrierte Nutzer kann aber als Angebot einer
+Plattformdienstleistung in der EU gewertet werden.
+
+[P0] Eine der folgenden Varianten verbindlich wählen
+
+VARIANTE A - streng schweizerischer Nutzerkreis:
+
+- Nur Personen mit Schweizer Wohn-/Geschäftsadresse und verifizierter
+  Schweizer Telefonnummer dürfen Konten erstellen und Nachrichten senden.
+- Personen aus Deutschland dürfen öffentliche Inserate ansehen, können die
+  Plattformfunktionen aber nicht als registrierte Nutzer verwenden.
+- Diese Variante reduziert das Risiko, dass DSGVO und Digital Services Act
+  wegen eines gezielten EU-Angebots anwendbar werden.
+
+VARIANTE B - ausländische Interessenten dürfen Konten erstellen und schreiben:
+
+- Das Schweizer DSG gilt weiterhin.
+- Zusätzlich sollte die Plattform von Beginn an auf DSGVO-Niveau gebaut werden.
+- Es muss regelmässig geprüft werden, ob Umfang und Art der EU-Nutzung eine
+  gezielte EU-Ausrichtung oder eine wesentliche Verbindung zur EU begründen.
+- Bei gezieltem EU-Angebot sind unter Umständen ein EU-Datenschutzvertreter,
+  ein DSA-Rechtsvertreter und zusätzliche DSA-Prozesse erforderlich.
+
+EMPFEHLUNG FÜR DAS BESCHRIEBENE MODELL:
+
+- Inserenten/Händler strikt auf die Schweiz begrenzen.
+- Fahrzeugstandort strikt auf die Schweiz begrenzen.
+- Für Käufer entweder Variante A wählen oder bei Variante B freiwillig die
+  wesentlichen DSGVO-Anforderungen erfüllen und vor Launch rechtlich prüfen.
+- Nicht behaupten, die Plattform sei "nur Schweiz", wenn deutsche Nutzer
+  tatsächlich gezielt registriert und betreut werden.
+
+
+4. UNTERNEHMEN UND ADMINISTRATION
+=================================
+
+[P0] Betreiber festlegen
+
+- Entscheiden, ob Einzelunternehmen, GmbH oder AG.
+- Bei Einzelunternehmen persönliche Haftung berücksichtigen.
+- Geschäftsname und Domain auf Firmen-, Marken- und Namenskonflikte prüfen.
+- Geschäftskonto und nachvollziehbare Buchhaltung einrichten.
+- Selbstständigkeit bei der zuständigen AHV-Ausgleichskasse abklären.
+- Handelsregisterpflicht prüfen. Bei Einzelunternehmen ist der Eintrag ab
+  CHF 100'000 Jahresumsatz grundsätzlich obligatorisch; ein freiwilliger
+  Eintrag kann vorher sinnvoll sein.
+- Mehrwertsteuerpflicht prüfen. Bei weniger als CHF 100'000 Umsatz aus
+  steuerbaren Leistungen besteht grundsätzlich eine Befreiung; Ausnahmen und
+  freiwillige Unterstellung mit Treuhand/ESTV klären.
+
+[P0] Buchhaltung und Belege
+
+- Jede Inseratszahlung mit Transaktions-ID, Betrag, Datum, Leistung und Kunde
+  nachvollziehbar speichern.
+- Elektronische Bestätigung/Rechnung bereitstellen.
+- Geschäftsbücher, Buchungsbelege und relevante Berichte grundsätzlich zehn
+  Jahre beweissicher aufbewahren.
+- Diese gesetzlichen Belege getrennt von normalen Nutzerprofilen speichern,
+  damit ein gelöschtes Konto nicht notwendige Buchhaltungsnachweise vernichtet.
+
+[P1] Versicherungen prüfen
+
+- Betriebshaftpflicht.
+- Vermögensschaden-/Berufshaftpflicht.
+- Cyberversicherung und Unterstützung bei Datenschutzvorfällen.
+
+
+5. ÖFFENTLICH ERREICHBARE RECHTSTEXTE
+=====================================
+
+Alle folgenden Seiten müssen vor dem Login und auf jeder angemeldeten Seite
+über einen Footer erreichbar sein. Keine Rechtstexte ausschliesslich in einem
+nicht öffentlichen Benutzerkonto verstecken.
+
+5.1 IMPRESSUM / ANBIETERKENNZEICHNUNG [P0]
+------------------------------------------------
+
+Mindestens aufnehmen:
+
+- Vollständiger rechtlicher Name/Firmenname.
+- Rechtsform.
+- Vollständige ladungsfähige Schweizer Postadresse.
+- Gültige Kontakt-E-Mail-Adresse.
+- Weitere direkte Kontaktmöglichkeit, als Empfehlung eine Telefonnummer.
+- Vertretungsberechtigte Person bei GmbH/AG.
+- Handelsregister, Handelsregisternummer und UID, falls vorhanden.
+- MWST-Nummer, falls mehrwertsteuerpflichtig.
+- Verantwortliche Stelle für Plattform- und Datenschutzanfragen.
+
+Kein Postfach als einzige Adresse verwenden. Angaben aktuell halten.
+
+5.2 DATENSCHUTZERKLÄRUNG [P0]
+---------------------------------
+
+Sie muss konkret zur tatsächlich eingesetzten Technik passen und mindestens
+folgende Bearbeitungen erklären:
+
+- Google-Login: Google-ID, E-Mail, Name/Profilbild, Authentifizierungsvorgänge.
+- Supabase: Benutzerkonto, Sessions, Datenbank, Realtime und Storage.
+- Profildaten: Username, Rolle privat/Händler, Kontaktdaten.
+- Inserate: Fahrzeugdaten, Beschreibung, Preis, Bilder und Standort.
+- Nachrichtensystem: Absender, Empfänger, Inhalt und Zeitpunkte.
+- Sicherheitsdaten: IP-Adresse, Geräte-/Browserinformationen, Login- und
+  Serverlogs, Rate-Limit- und Missbrauchsdaten.
+- Zahlungsdaten: Payrexx-Transaktions-ID, Zahlungsstatus, Betrag und Zeitpunkt.
+  Keine vollständigen Karten- oder Bankdaten selbst speichern.
+- Support-, Melde- und Moderationsdaten.
+- Cookies, Local Storage und ähnliche Technologien.
+
+Für jede Kategorie angeben:
+
+- Verantwortlicher und Kontaktadresse.
+- Zweck der Bearbeitung.
+- Erforderlichkeit bzw. Rechtsgrundlage, falls DSGVO relevant ist.
+- Empfänger/Auftragsbearbeiter.
+- Bearbeitungsland und mögliche Auslandübermittlung.
+- Speicherdauer oder nachvollziehbare Kriterien dafür.
+- Rechte auf Auskunft, Berichtigung, Löschung, Herausgabe/Übertragung und
+  Widerspruch, soweit anwendbar.
+- Beschwerdemöglichkeit beim EDÖB und gegebenenfalls bei einer EU-Behörde.
+- Ob Daten für Profiling oder automatisierte Entscheidungen verwendet werden.
+- Wie Datenschutzanfragen gestellt werden können.
+
+Die Datenschutzerklärung ist eine Information. Nicht pauschal schreiben
+"Mit der Nutzung stimmen Sie jeder Datenbearbeitung zu". Einwilligung nur dort
+verwenden, wo sie wirklich erforderlich ist, z.B. nicht notwendiges Tracking
+oder Marketing.
+
+5.3 NUTZUNGSBEDINGUNGEN / AGB [P0]
+-------------------------------------
+
+Folgende Kapitel vorsehen:
+
+1. Betreiber, Geltungsbereich und Begriffe.
+2. Schweizer Zielmarkt und Schweizer Fahrzeugstandort.
+3. Mindestalter; Empfehlung: Konto und Inserate erst ab 18 Jahren.
+4. Registrierung, korrekte Daten und Kontosicherheit.
+5. Unterschied zwischen privatem Verkäufer und Händler.
+6. Erlaubte Fahrzeuge und verbotene Inhalte.
+7. Anforderungen an Wahrheit, Aktualität und Bildrechte eines Inserats.
+8. Inseratspreis, Laufzeit, Verlängerung und Leistungsumfang.
+9. Zahlungsablauf, Zahlungsfehler und Rückerstattungsregeln.
+10. Keine automatische Veröffentlichung vor bestätigter Zahlung.
+11. Moderation, Prüfung, Ablehnung, Sperrung und Löschung.
+12. Verfahren bei Betrug, illegalen Inhalten und Beschwerden.
+13. Interne Nachrichten und zulässige Nutzung.
+14. Lizenz, die der Nutzer für Darstellung und technische Bearbeitung seiner
+    Inseratstexte und Bilder erteilt.
+15. Rolle der Plattform als Inserate-/Kontaktvermittler.
+16. Fahrzeugkaufvertrag ausschliesslich zwischen Käufer und Verkäufer.
+17. Keine Verwahrung des Fahrzeugkaufpreises und keine Eigentumsübertragung
+    über die Plattform.
+18. Haftung der Verkäufer für Fahrzeug, Angaben, Eigentum, Mängel,
+    Gewährleistung, Zulassung und Übergabe.
+19. Eigene Haftung des Plattformbetreibers, ohne zwingendes Recht oder eigene
+    grobe Pflichtverletzungen unzulässig auszuschliessen.
+20. Kündigung, Kontolöschung und Folgen für aktive Inserate/Nachrichten.
+21. Änderungen der AGB, Benachrichtigung und Versionshistorie.
+22. Schweizer Recht und Gerichtsstand unter Vorbehalt zwingender
+    Konsumentenschutz- und Gerichtsstandsregeln.
+
+AGB wirksam einbeziehen:
+
+- Vor Registrierung und spätestens vor kostenpflichtiger Veröffentlichung
+  deutlich verlinken.
+- Unangekreuzte Checkbox verwenden: "Ich akzeptiere die Nutzungsbedingungen".
+- Akzeptierte AGB-Version, Nutzer-ID und Zeitpunkt protokollieren.
+- Text speicher- und ausdruckbar bereitstellen.
+- Wesentliche Änderungen ankündigen und neue Zustimmung verlangen, wenn nötig.
+
+5.4 PREIS-, ZAHLUNGS- UND RÜCKERSTATTUNGSINFORMATION [P0]
+----------------------------------------------------------
+
+- Inseratsgebühr als tatsächlich zu zahlenden Gesamtpreis in CHF anzeigen.
+- MWST einschliessen und ausweisen, falls geschuldet.
+- Keine obligatorischen Gebühren erst am Ende hinzufügen.
+- Vor Zahlung Leistung und Laufzeit des Inserats nennen.
+- Button eindeutig beschriften, z.B. "Inserat kostenpflichtig veröffentlichen".
+- Vor Absenden Korrektur der Angaben ermöglichen.
+- Nach Zahlung unverzüglich elektronische Bestätigung senden.
+- Definieren, wann die Leistung beginnt und wann eine Rückzahlung erfolgt.
+- Schweiz kennt für gewöhnliche Onlinekäufe kein allgemeines gesetzliches
+  Widerrufsrecht wie die EU; trotzdem eine klare faire Rückerstattungsregel
+  anbieten.
+
+WICHTIG FÜR DEN AKTUELLEN CODE:
+
+- Der derzeit hardcodierte Zahlungsstatus "erfolgreich = True" darf niemals in
+  Produktion verwendet werden.
+- Veröffentlichung nur nach serverseitig verifiziertem Payrexx-Webhook.
+- Webhook-Signatur prüfen, Ereignis-ID speichern und Ereignisse idempotent
+  verarbeiten.
+- Niemals dem Frontend-Redirect allein vertrauen.
+
+5.5 COOKIE-/TRACKING-INFORMATION [P0, WENN RELEVANT]
+-----------------------------------------------------
+
+- Technisch notwendige Auth-/Session-Speicherung dokumentieren.
+- Vor Launch mit einem Browser-Scan feststellen, welche Cookies, Local-Storage-
+  Einträge und Drittanfragen tatsächlich verwendet werden.
+- Kein Zustimmungsbanner nur zur Dekoration einbauen.
+- Nicht notwendiges Analytics-, Werbe- oder Profiling-Tracking erst nach
+  wirksamer Einwilligung laden.
+- "Alle ablehnen" genauso einfach wie "Alle akzeptieren" gestalten.
+- Einwilligung jederzeit über Footer-Einstellungen widerrufbar machen.
+- Google Analytics, Werbepixel oder Social Plugins nicht ungeprüft hinzufügen.
+- Google OAuth in der Datenschutzerklärung nennen; ein bewusst gestarteter
+  Login ist von verstecktem Werbetracking zu unterscheiden.
+
+
+6. KLARE ROLLE ALS VERMITTLER
+=============================
+
+[P0] Auf jeder Detailseite und in den AGB verständlich erklären:
+
+- "Das Inserat stammt vom angegebenen Verkäufer."
+- "Die Plattform ist nicht Verkäuferin des Fahrzeugs."
+- "Ein allfälliger Kaufvertrag entsteht ausschliesslich direkt zwischen Käufer
+  und Verkäufer."
+- "Besichtigung, Prüfung, Preisverhandlung, Zahlung und Übergabe erfolgen
+  ausserhalb der Plattform."
+
+Nicht behaupten:
+
+- Dass jedes Fahrzeug geprüft wurde, wenn keine Prüfung erfolgt.
+- Dass Händler oder Privatpersonen vollständig verifiziert seien, wenn nur die
+  E-Mail-Adresse geprüft wurde.
+- Dass Nachrichten Ende-zu-Ende-verschlüsselt seien, wenn das nicht stimmt.
+- Dass Betrug ausgeschlossen sei.
+
+Ein Haftungsausschluss schützt nicht vor Verantwortung für eigene irreführende
+Darstellung, eigene Datenschutzverletzungen oder ignorierte konkrete Hinweise
+auf rechtswidrige Inhalte.
+
+
+7. PRIVATE VERKÄUFER UND HÄNDLER
+================================
+
+[P0] Verkäufertyp verpflichtend erfassen
+
+- Auswahl "Privatverkäufer" oder "Händler/gewerblicher Verkäufer".
+- Verkäufertyp auf jedem Inserat sichtbar anzeigen.
+- Änderung von Händler zu privat nicht zur Umgehung von Pflichten erlauben.
+- Verdächtige Vielverkäufer prüfen und gegebenenfalls als Händler einstufen.
+
+[P0] Private Verkäufer
+
+- E-Mail verifizieren.
+- Schweizer Wohn-/Kontaktadresse intern erfassen, aber nicht vollständig
+  öffentlich anzeigen.
+- Schweizer Telefonnummer verifizieren, falls die Plattform strikt auf die
+  Schweiz begrenzt werden soll.
+- Bestätigung verlangen, dass sie verfügungsberechtigt sind und Angaben/Bilder
+  verwenden dürfen.
+- Anzahl aktiver Inserate begrenzen und Missbrauchsmuster überwachen.
+
+[P0/P1] Händler
+
+- Rechtlichen Firmennamen erfassen.
+- Geschäftsadresse, geschäftliche E-Mail und Telefonnummer erfassen.
+- UID-/Handelsregisternummer erfassen und soweit möglich gegen Zefix/UID-Register
+  prüfen.
+- Vertretungsberechtigte Kontaktperson erfassen.
+- Händlerstatus erst nach Prüfung freischalten; Prüfdatum dokumentieren.
+- Händlerprofil mit Geschäftsidentität öffentlich anzeigen.
+- Händler vertraglich verpflichten, Konsumenten-, Preis-, Gewährleistungs-,
+  Werbe- und Fahrzeugvorschriften einzuhalten.
+- Händler müssen Gesamtpreis in CHF und alle nicht optionalen Kosten korrekt
+  angeben.
+- Händlerbedingungen oder einen Händlerzusatz zu den AGB erstellen.
+
+[P1] Regelmässige Wiederprüfung
+
+- Händlerdaten mindestens bei Änderungen und risikobasiert erneut prüfen.
+- Ungültige Firmen, Beschwerden und auffällige Inserate manuell untersuchen.
+- Händlerprüfung nicht als Fahrzeug- oder Bonitätsprüfung darstellen.
+
+
+8. INSERATSREGELN UND FAHRZEUGDATEN
+===================================
+
+[P0] Pflichtangaben je nach Fahrzeugtyp festlegen
+
+- Marke, Modell, Preis, Jahr und bei Auto/Motorrad Leistung.
+- Standort Kanton/Postleitzahl Schweiz.
+- Zustand und bekannte wesentliche Mängel.
+- Bei Motorfahrzeugen sinnvoll: Kilometerstand und Erstzulassung.
+- Händler müssen gesetzlich erforderliche Zusatzangaben selbst bereitstellen.
+
+[P0, WENN NEUWAGEN ZUGELASSEN WERDEN] Energieetikette unterstützen
+
+- Für online angebotene Personenwagen mit höchstens 2'000 km Fahrleistung sind
+  nach den Angaben des BFE unter anderem Energieverbrauch, CO2-Ausstoss,
+  Energieeffizienzkategorie und die vorgeschriebene visuelle Energieetikette
+  anzugeben.
+- Im Inseratformular dafür strukturierte Felder und einen Upload/Generator für
+  die offizielle Darstellung vorsehen.
+- Händler vertraglich zur Richtigkeit verpflichten; Pflichtfelder technisch
+  erzwingen, wenn das Fahrzeug als Neuwagen gilt.
+- Bei normalen Occasionen ist die Energieetikette nach BFE freiwillig.
+- Vor Einführung von Neuwageninseraten die jeweils aktuelle EnEV/VEE-PLS und
+  die BFE-Vorlagen erneut prüfen.
+
+[P0] Verbotene Inhalte definieren
+
+- Gestohlene Fahrzeuge oder Fahrzeuge ohne Verfügungsberechtigung.
+- Betrügerische, falsche oder irreführende Angebote.
+- Unzulässige Waren, gefälschte Dokumente oder manipulierte Identitäten.
+- Fremde Bilder ohne Nutzungsrecht.
+- Personenbezogene Daten Dritter ohne Berechtigung.
+- Schadsoftware, Spam, externe Zahlungsbetrugslinks und Phishing.
+- Diskriminierende, bedrohende oder sonst rechtswidrige Inhalte.
+
+[P0] Bilder
+
+- Verkäufer muss Bildrechte bestätigen.
+- Auf Kennzeichen, Gesichter, Dokumente und Standortdetails hinweisen.
+- Keine Fahrzeugausweise oder Identitätsdokumente öffentlich anzeigen lassen.
+- Melde- und Löschprozess für Urheber-/Persönlichkeitsrechtsverletzungen.
+- Bestehende Größen-, Typ-, Anzahl- und Sicherheitsprüfung beibehalten.
+
+[P1] Aktualität
+
+- Verkäufer muss verkauftes Fahrzeug als verkauft markieren oder löschen.
+- Inserate nach definierter Laufzeit deaktivieren.
+- Erinnerung vor Ablauf und keine automatische kostenpflichtige Verlängerung
+  ohne klare vorherige Vereinbarung.
+
+
+9. MELDUNG, MODERATION UND BETRUGSSCHUTZ
+=======================================
+
+[P0] Öffentliche Meldefunktion einbauen
+
+Auf jedem Inserat "Inserat melden" anbieten mit Kategorien:
+
+- Betrug/Phishing.
+- Fahrzeug gestohlen oder Verkäufer nicht berechtigt.
+- Falsche Angaben.
+- Gewerblicher Händler als privat gekennzeichnet.
+- Verbotener/rechtswidriger Inhalt.
+- Bild-/Urheberrechtsverletzung.
+- Sonstiges.
+
+[P0] Interner Moderationsprozess
+
+- Meldung mit ID, Zeitpunkt, Inserat, Meldegrund und Status speichern.
+- Dringlichkeit/Risiko einstufen.
+- Hochrisiko-Inserat vorübergehend unsichtbar machen können.
+- Verkäufer anhören, soweit angemessen.
+- Entscheidung und Begründung protokollieren.
+- Nutzer über Löschung/Sperrung und Einspruchsmöglichkeit informieren.
+- Wiederholungstäter und verbundene Konten erkennen.
+- Bei konkretem Verdacht Beweise nicht unnötig vernichten; Behördenanfragen nur
+  über einen definierten Prozess bearbeiten.
+
+[P1] Einspruch und Support
+
+- Einfaches internes Einspruchsformular.
+- Supportadresse und realistische Bearbeitungsfrist.
+- Keine vollautomatische endgültige Sperrung ohne angemessene Überprüfung bei
+  strittigen Fällen.
+
+[P1] Sicherheitsinformationen für Nutzer
+
+- Fahrzeug vor Ort prüfen.
+- Identität und Fahrzeugpapiere prüfen.
+- Keine Vorschüsse an unbekannte Personen.
+- Vorsicht bei externen Links und angeblichen Speditionen/Treuhanddiensten.
+- Verdächtige Nachrichten melden.
+
+
+10. INTERNES NACHRICHTENSYSTEM
+==============================
+
+[P0]
+
+- Nachrichten nur für Teilnehmer der Unterhaltung zugänglich machen.
+- Verkäufer darf sich nicht selbst kontaktieren; bestehende Regel beibehalten.
+- Rate Limits und Nachrichtenlänge beibehalten.
+- Funktion "Nutzer/Nachricht melden" ergänzen.
+- Funktion "Nutzer blockieren" ergänzen.
+- Keine ausführbaren Anhänge oder Links ungeprüft zulassen.
+- Erklären, ob Support/Moderation Nachrichten bei Meldungen oder Missbrauchs-
+  verdacht einsehen kann.
+- Keine Vertraulichkeit versprechen, die technisch/organisatorisch nicht
+  gewährleistet wird.
+
+[P1]
+
+- Phishing-/Betrugslinks erkennen oder mindestens deutlich warnen.
+- Ungewöhnlich hohe Nachrichtenaktivität begrenzen.
+- Lösch- und Aufbewahrungskonzept implementieren.
+
+
+11. DATENSCHUTZ-ORGANISATION
+============================
+
+[P0] Dateninventar/Verzeichnis erstellen
+
+Für jede Datenkategorie dokumentieren:
+
+- Quelle.
+- Zweck.
+- betroffene Personen.
+- Datenfelder.
+- System/Region.
+- Zugriffsberechtigte.
+- Empfänger/Auftragsbearbeiter.
+- Auslandübermittlung und Schutzmechanismus.
+- Aufbewahrungsfrist.
+- Löschprozess.
+- Sicherheitsmaßnahmen.
+
+Auch wenn eine formale Ausnahme für kleine Unternehmen greifen könnte, ist ein
+einfaches Verzeichnis für diese Plattform dringend zu empfehlen.
+
+[P0] Dienstleisterverträge
+
+- Supabase DPA/Auftragsverarbeitungsvertrag abschliessen und Region,
+  Unterauftragsbearbeiter und Auslandtransfers prüfen.
+- Hostinganbieter-DPA abschliessen.
+- Google-Datenschutzbedingungen für OAuth prüfen und dokumentieren.
+- Vor Payrexx-Start Vertrag, Datenschutzrollen, Unterauftragnehmer,
+  Aufbewahrung und Datenstandorte prüfen.
+- Support-, E-Mail- und Monitoringanbieter ebenfalls erfassen.
+
+[P0] Privacy by Default
+
+- Nur notwendige Profildaten erheben.
+- E-Mail und Wohnadresse nicht öffentlich anzeigen.
+- Private Nachrichten nicht öffentlich oder für andere Nutzer abfragbar machen.
+- Bilder in privatem Storage halten und zeitlich begrenzte URLs verwenden.
+- Service-Role-Key ausschliesslich serverseitig speichern.
+- Jede serverseitige Service-Role-Abfrage auf Besitzer/Teilnehmer einschränken,
+  weil die Service Role Datenbank-RLS umgehen kann.
+- Supabase-RLS und Storage-Policies vor Launch mit mehreren Testnutzern prüfen.
+
+[P0] Betroffenenrechte technisch ermöglichen
+
+- Kontaktweg für Datenschutzanfragen.
+- Identität des Antragstellers angemessen prüfen.
+- Export von Profil, Inseraten und eigenen Nachrichten ermöglichen.
+- Korrektur von Profildaten ermöglichen.
+- Kontolöschung ermöglichen.
+- Löschung/Anonymisierung abhängiger Inserate, Bilder und Nachrichten festlegen.
+- Gesetzlich aufzubewahrende Zahlungs-/Buchungsbelege getrennt erhalten.
+- Bearbeitungsprozess und Antworten dokumentieren.
+
+[P0] Aufbewahrungskonzept festlegen
+
+Die folgenden Werte sind Empfehlungen, keine automatisch gesetzlichen Fristen:
+
+- Aktives Konto: solange erforderlich.
+- Gelöschtes Konto: operative Daten innerhalb ca. 30 Tagen löschen/anonymisieren,
+  Backups nach festem Zyklus überschreiben.
+- Abgelaufene Inserate/Bilder: z.B. 90 Tage Nachfrist, danach löschen, sofern
+  keine Meldung/Streitigkeit besteht.
+- Nachrichten: z.B. 12 Monate nach Ende/Archivierung einer Unterhaltung;
+  längere Dauer nur mit dokumentiertem Bedarf.
+- Sicherheits-/Zugriffslogs: z.B. 30 bis 90 Tage, bei Vorfällen länger.
+- Moderationsfälle: risikobasiert, z.B. 2 bis 3 Jahre.
+- Rechnungen, Zahlungs- und Buchungsbelege: grundsätzlich 10 Jahre.
+
+Die echten Fristen müssen in Datenschutzerklärung und interner Richtlinie
+übereinstimmen und technisch durch Löschjobs umgesetzt werden.
+
+[P0] Datenschutzvorfälle
+
+- Interne Notfallkontaktperson bestimmen.
+- Prozess für Erkennung, Eindämmung, Beweissicherung und Risikobewertung.
+- Auftragsbearbeiter müssen Vorfälle unverzüglich melden.
+- Vorfallregister führen.
+- Verletzung mit voraussichtlich hohem Risiko so rasch wie möglich dem EDÖB
+  melden und prüfen, ob Betroffene informiert werden müssen.
+
+[P2] Datenschutz-Folgenabschätzung
+
+- Bei neuer umfangreicher Überwachung, Profiling, automatischer Betrugssperre,
+  Ausweiskopien, Standorttracking oder sonst hohem Risiko neu prüfen.
+
+
+12. TECHNISCHE SICHERHEIT
+=========================
+
+[P0]
+
+- Produktion ausschliesslich über HTTPS/TLS.
+- Sichere Domain, DNS, Zertifikate und automatische Erneuerung.
+- Secrets nur in Server-Umgebung; niemals im Git-Repository oder Clientbundle.
+- Supabase-Service-Role-Key rotieren, falls er jemals offengelegt wurde.
+- Google OAuth Redirect-URLs auf echte Produktionsdomains begrenzen.
+- CORS auf Produktionsdomain begrenzen; lokale WLAN-Regeln nicht übernehmen.
+- RLS-Tests für Profile, Fahrzeuge, Bilder, Chats und Benachrichtigungen.
+- Server prüft Authentication, Authorization, Input Validation, Rate Limits und
+  Businessregeln; Clientvalidierung ist nur Komfort.
+- Bildtyp anhand tatsächlichen Inhalts prüfen; bestehende Pillow-Prüfung nutzen.
+- Backups, Wiederherstellung und regelmäßigen Restore-Test einrichten.
+- Adminzugänge mit MFA und minimalen Rechten.
+- Abhängigkeiten aktualisieren und Sicherheitsmeldungen überwachen.
+- Fehlerantworten dürfen keine Tokens, SQL-Details oder personenbezogenen Daten
+  enthalten.
+
+[P0/P1]
+
+- In-Memory-Rate-Limiter vor mehreren Serverinstanzen durch Redis oder einen
+  zentralen Gateway-Limiter ersetzen.
+- Zentrale manipulationsgeschützte Auditlogs für Admin-/Moderationsaktionen.
+- Monitoring und Alarmierung für Fehler, Loginmissbrauch und ungewöhnliche
+  Upload-/Nachrichtenaktivität.
+- Regelmässige externe Sicherheitsprüfung vor größerem Betrieb.
+
+
+13. MARKETING, E-MAIL UND BENACHRICHTIGUNGEN
+===========================================
+
+[P0]
+
+- Transaktionsnachrichten und Werbung klar trennen.
+- Für Newsletter/Werbung grundsätzlich vorheriges Opt-in einholen.
+- Keine vorangekreuzte Marketing-Checkbox.
+- Double-Opt-in als Nachweis verwenden.
+- Absenderidentität und einfache Abmeldemöglichkeit in jeder Werbenachricht.
+- Kein Kauf von E-Mail-Listen.
+- Service-E-Mails nur für Kontosicherheit, Zahlung, Inseratstatus und tatsächlich
+  erforderliche Plattformkommunikation verwenden.
+
+
+14. DSA/DSGVO BEI TATSÄCHLICHER EU-NUTZUNG
+==========================================
+
+Dieser Abschnitt ist eine Prüfliste, falls deutsche/EU-Nutzer Konten erstellen
+und dies nicht nur vereinzelt geschieht oder die Plattform EU-Nutzer bewirbt.
+
+[PRÜFEN]
+
+- Gilt die DSGVO aufgrund eines Angebots an Personen in der EU?
+- Ist ein EU-Vertreter nach Art. 27 DSGVO erforderlich oder greift eine enge
+  Ausnahme?
+- Besteht eine wesentliche Verbindung zur EU im Sinn des DSA?
+- Ist ein DSA-Rechtsvertreter in der EU erforderlich?
+- Müssen DSA-Kontaktstellen veröffentlicht werden?
+- Müssen Melde-/Abhilfeverfahren, Moderationsbegründungen und interne
+  Beschwerden an DSA-Vorgaben angepasst werden?
+- Welche Erleichterungen gelten als Kleinst-/Kleinunternehmen?
+- Muss die Zahl aktiver EU-Nutzer veröffentlicht/ermittelt werden?
+
+Wichtig für dein Modell:
+
+- Dass der Fahrzeugkaufvertrag ausserhalb der Website geschlossen wird, kann
+  bestimmte spezielle Online-Marktplatzpflichten für den Vertragsabschluss
+  reduzieren.
+- Das Speichern und öffentliche Anzeigen von Nutzerinseraten bleibt dennoch
+  eine Hosting-/Plattformfunktion.
+- Die reine technische Abrufbarkeit aus Deutschland reicht für eine wesentliche
+  EU-Verbindung nicht automatisch aus.
+- Die bewusste Möglichkeit für deutsche Nutzer, Konten zu erstellen und das
+  Nachrichtensystem zu nutzen, erhöht dagegen das EU-Anwendungsrisiko.
+
+
+15. KONKRETE FEHLENDE FUNKTIONEN IN DER AKTUELLEN APP
+=====================================================
+
+P0 VOR PRODUKTION:
+
+[ ] Impressum-Seite erstellen.
+[ ] Datenschutzerklärungs-Seite erstellen.
+[ ] AGB/Nutzungsbedingungen erstellen.
+[ ] Footer auf Login und MainLayout mit diesen Links ergänzen.
+[ ] AGB-Version und Zustimmung bei Registrierung/Zahlung speichern.
+[ ] Schweizer Fahrzeugstandort/Kanton/Postleitzahl ergänzen.
+[ ] Verkäufertyp privat/Händler ergänzen und sichtbar anzeigen.
+[ ] Händlerdaten und Händlerprüfung ergänzen.
+[ ] "Inserat melden" und Moderationsablauf ergänzen.
+[ ] "Nutzer/Nachricht melden" und Blockieren ergänzen.
+[ ] Kontolöschung implementieren.
+[ ] Datenexport implementieren.
+[ ] Technische Lösch-/Aufbewahrungsjobs implementieren.
+[ ] Produktives HTTPS und restriktive Produktions-CORS-Konfiguration.
+[ ] Payrexx-Webhook statt hardcodiert erfolgreicher Zahlung.
+[ ] Elektronische Zahlungs-/Bestellbestätigung.
+[ ] Supabase RLS/Storage und alle Service-Role-Abfragen testen.
+[ ] Dienstleister-DPAs und Auslandtransfers dokumentieren.
+[ ] Backup-/Restore- und Datenschutzvorfallprozess einrichten.
+
+P1 NACH DEM TECHNISCHEN MINIMUM:
+
+[ ] Händler-Wiederprüfung und Missbrauchserkennung.
+[ ] Moderationsdashboard mit Entscheidungsprotokoll.
+[ ] Einspruchsprozess.
+[ ] Phishing-/Betrugswarnungen im Chat.
+[ ] Zentraler Rate Limiter für mehrere Serverinstanzen.
+[ ] Admin-MFA, Rollen und Auditlogs.
+[ ] Consent-Management nur falls nicht notwendiges Tracking hinzukommt.
+
+
+16. EMPFOHLENE DOKUMENTENSTRUKTUR
+=================================
+
+ÖFFENTLICH:
+
+1. Impressum
+2. Datenschutzerklärung
+3. Nutzungsbedingungen/AGB
+4. Händlerbedingungen oder Händlerzusatz
+5. Preis-, Laufzeit- und Rückerstattungsinformation
+6. Melde-/Moderationshinweise
+7. Sicherheitstipps für Käufer und Verkäufer
+8. Cookie-Einstellungen, falls erforderlich
+
+INTERN:
+
+1. Verzeichnis der Datenbearbeitungen
+2. Liste der Dienstleister, Unterauftragnehmer und Datenstandorte
+3. Verträge/DPA mit Auftragsbearbeitern
+4. Aufbewahrungs- und Löschkonzept
+5. Technische und organisatorische Sicherheitsmaßnahmen
+6. Datenschutzvorfall-/Data-Breach-Plan
+7. Moderations- und Betrugsprozess
+8. Behördenanfragenprozess
+9. Backup-/Restore-Plan
+10. AGB-/Datenschutzerklärungs-Versionsarchiv
+
+
+17. EMPFOHLENE LAUNCH-REIHENFOLGE
+=================================
+
+SCHRITT 1
+- Variante A oder B für Nutzer aus Deutschland/EU verbindlich festlegen.
+- Rechtsform, Betreiber und Geschäftsadresse festlegen.
+
+SCHRITT 2
+- Dateninventar und Dienstleisterliste erstellen.
+- Schweizer Standort- und Verkäuferrollen in das Datenmodell aufnehmen.
+
+SCHRITT 3
+- Impressum, Datenschutzerklärung, AGB und Händlerbedingungen entwerfen.
+- Entwürfe rechtlich prüfen lassen.
+
+SCHRITT 4
+- Footer und Zustimmungsversionierung implementieren.
+- Händlerprüfung, Melden, Blockieren, Kontolöschung und Datenexport bauen.
+
+SCHRITT 5
+- Payrexx vollständig serverseitig integrieren.
+- Preis-/Bestellseite und Bestätigungs-E-Mail fertigstellen.
+
+SCHRITT 6
+- Produktionsinfrastruktur, HTTPS, CORS, Backups, RLS- und Sicherheitstests.
+- Test mit mindestens zwei normalen Nutzern, einem Händler und einem Admin.
+
+SCHRITT 7
+- Kleiner geschlossener Schweizer Pilotbetrieb.
+- Meldungen, Support, Löschung, Zahlung und Restore praktisch testen.
+
+SCHRITT 8
+- Letzte Rechts-/Datenschutzprüfung und erst danach öffentlicher Launch.
+
+
+18. OFFIZIELLE QUELLEN UND STARTPUNKTE
+======================================
+
+Schweizer Onlinehandel / UWG:
+https://www.seco.admin.ch/de/onlinehandel
+
+SECO zu Preis und Vertragsabschluss:
+https://www.seco.admin.ch/de/vor-dem-kauf-und-vertragsabschluss
+
+SECO Grundlagen Preisbekanntgabe:
+https://www.seco.admin.ch/de/grundlagen-pbv
+
+EDÖB zu Datenschutzerklärungen:
+https://www.edoeb.admin.ch/de/datenschutzerklaerungen-im-internet
+
+EDÖB zu Auftragsdatenbearbeitung/Cloud:
+https://www.edoeb.admin.ch/de/outsourcing-auftragsdatenbearbeitung
+
+EDÖB zu Auslandübermittlungen:
+https://www.edoeb.admin.ch/de/bekanntgabe-von-personendaten-ins-ausland
+
+EDÖB zu Cookies:
+https://www.edoeb.admin.ch/de/cookies-praktische-tipps
+
+EDÖB FAQ einschließlich möglicher DSGVO-Anwendung:
+https://www.edoeb.admin.ch/de/faq-datenschutz
+
+BFE zur Energieetikette und Onlineinseraten für neue Personenwagen:
+https://www.bfe.admin.ch/de/fragen-und-antworten-energieetikette-pw
+
+Schweizer KMU-Portal zur Mehrwertsteuer:
+https://www.kmu.admin.ch/de/mwst-so-funktioniert-die-mehrwertsteuer
+
+Schweizer KMU-Portal zur Buchhaltung:
+https://www.kmu.admin.ch/de/buchhaltungspflicht-fuer-handelsgesellschaften
+
+EU-Datenschutz-Grundverordnung:
+https://eur-lex.europa.eu/eli/reg/2016/679/oj
+
+EU Digital Services Act:
+https://eur-lex.europa.eu/eli/reg/2022/2065/oj
+
+
+ENDE DER CHECKLISTE
+===================

@@ -1,15 +1,17 @@
 import unittest
+from unittest.mock import patch
 
 from fastapi import HTTPException
 from pydantic import ValidationError
 
 from app.profiles.schemas import SellerProfileUpdate
+from app.legal.service import record_listing_terms_acceptance
 from app.moderation.schemas import ReportDecision
 from app.safety.schemas import ReportCreate
 from app.vehicles.filters import validate_filters
 from app.vehicles.fields import public_listing_fields
 from app.vehicles.lifecycle import resolve_listing_status
-from app.vehicles.schemas import VehicleCreate
+from app.vehicles.schemas import ListingPublishRequest, VehicleCreate
 
 
 class VehicleRulesTests(unittest.TestCase):
@@ -33,6 +35,19 @@ class VehicleRulesTests(unittest.TestCase):
 
     def test_bicycles_do_not_query_power_column(self):
         self.assertNotIn("power", public_listing_fields("bicycles").split(", "))
+
+    def test_listing_publication_requires_explicit_terms_acceptance(self):
+        with self.assertRaises(ValidationError):
+            ListingPublishRequest(terms_version="0.1-draft", terms_accepted=False)
+        payload = ListingPublishRequest(terms_version="0.1-draft", terms_accepted=True)
+        self.assertTrue(payload.terms_accepted)
+
+    @patch("app.legal.service.get_current_terms")
+    def test_outdated_terms_version_is_rejected(self, current_terms):
+        current_terms.return_value = {"id": "document-id", "version": "2.0"}
+        with self.assertRaises(HTTPException) as context:
+            record_listing_terms_acceptance("user-id", "cars", "listing-id", "1.0")
+        self.assertEqual(context.exception.status_code, 409)
 
 
 class ProfileAndSafetyRulesTests(unittest.TestCase):
