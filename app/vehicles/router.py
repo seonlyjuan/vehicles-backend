@@ -15,7 +15,13 @@ from app.vehicles.rate_limits import (
     read_limited_user,
     status_limited_user,
 )
-from app.vehicles.schemas import ImageOrderUpdate, ListingStatusUpdate, VehicleCreate, VehicleUpdate
+from app.vehicles.schemas import (
+    ImageOrderUpdate,
+    ListingPublishRequest,
+    ListingStatusUpdate,
+    VehicleCreate,
+    VehicleUpdate,
+)
 from app.vehicles.lifecycle import change_listing_status, delete_listing, publish_listing, update_listing
 from app.vehicles.listing_service import (
     create_listing,
@@ -75,8 +81,13 @@ def get_listing_payment_status(vehicle_type: str, vehicle_id: str, user_id: str 
 
 
 @router.post("/{vehicle_type}/{vehicle_id}/publish")
-def post_publish_listing(vehicle_type: str, vehicle_id: str, user_id: str = Depends(publish_limited_user)) -> dict[str, object]:
-    return publish_listing(vehicle_type, vehicle_id, user_id)
+def post_publish_listing(
+    vehicle_type: str,
+    vehicle_id: str,
+    payload: ListingPublishRequest,
+    user_id: str = Depends(publish_limited_user),
+) -> dict[str, object]:
+    return publish_listing(vehicle_type, vehicle_id, user_id, payload.terms_version)
 
 
 @router.post("/{vehicle_type}")

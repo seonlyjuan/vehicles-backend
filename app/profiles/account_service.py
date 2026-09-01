@@ -39,6 +39,11 @@ def export_account_data(user_id: str) -> dict[str, object]:
         "reports": supabase.table("content_reports").select("*").eq("reporter_id", user_id).execute().data or [],
         "blocks": supabase.table("user_blocks").select("*").eq("blocker_id", user_id).execute().data or [],
         "payments": supabase.table("listing_payments").select("*").eq("user_id", user_id).execute().data or [],
+        "legal_acceptances": (
+            supabase.table("legal_acceptances")
+            .select("*, legal_documents(document_type, version, display_version, title, public_path, content_sha256)")
+            .eq("user_id", user_id).execute().data or []
+        ),
         "notifications": supabase.table("user_notifications").select("*").eq("recipient_id", user_id).execute().data or [],
         "moderation_appeals": supabase.table("moderation_appeals").select("*").eq("appellant_id", user_id).execute().data or [],
     }
