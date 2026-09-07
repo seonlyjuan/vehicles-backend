@@ -147,7 +147,36 @@ Launch mit der Datenschutzerklärung abgestimmt werden.
 - Ein Admin wird ausschliesslich direkt in der Datenbank über
   `profiles.platform_role = 'admin'` freigeschaltet, niemals über den Client.
 - Payrexx ist noch nicht angebunden. In Produktion bleibt die Veröffentlichung
-  deshalb gesperrt, bis ein signaturgeprüfter Payrexx-Webhook implementiert ist.
+  deshalb gesperrt, bis Zahlungserstellung und der vorhandene Platzhalter-Webhook
+  an die echte Payrexx-Spezifikation angebunden sind.
+
+## Zahlungsplatzhalter: Webhook, Bestätigung und Rückerstattung
+
+Die App enthält einen provider-neutralen Platzhalter unter
+`POST /payments/webhooks/placeholder`. Er erstellt keine Zahlung. Vor einer
+Payrexx-Anbindung müssen URL, Payload und Signaturverfahren an die offizielle
+Provider-Spezifikation angepasst werden.
+
+Der Platzhalter erwartet `X-Payment-Event-Id`, einen Unix-Zeitstempel in
+`X-Payment-Timestamp` und `X-Payment-Signature`. Die Signatur ist der hexadezimale
+HMAC-SHA256 über `timestamp.event_id.raw_request_body` mit
+`PAYMENT_WEBHOOK_SECRET`. Alte Zeitstempel werden abgelehnt. Eine atomare
+Datenbankfunktion speichert jede Event-ID nur einmal, prüft Betrag und Währung
+und setzt erst danach Zahlung und Inserat serverseitig auf bezahlt.
+
+Zahlungs- und Rückerstattungsbestätigungen werden dauerhaft in `email_outbox`
+eingereiht. Ein späterer Mail-Worker muss die Vorlagen versenden und den Status
+auf `sent` oder `failed` setzen. Rückerstattungen werden durch den Nutzer über
+`POST /payments/{payment_id}/refund-requests` beantragt, durch Moderatoren über
+`PATCH /payments/refund-requests/{refund_id}` geprüft und erst durch ein
+signiertes `refunded`-Provider-Event abgeschlossen. Eine Genehmigung löst im
+Platzhalter noch keine echte Rückzahlung aus.
+
+`LISTING_FEE_CHF` ist standardmässig der Brutto-Endpreis. Netto- und MWST-Anteil
+werden mit `VAT_RATE_PERCENT` dezimal und auf Rappen gerundet gespeichert. Falls
+der konfigurierte Preis netto gemeint ist, `LISTING_FEE_INCLUDES_VAT=false`
+setzen. Ob und welcher MWST-Satz tatsächlich gilt, muss vor dem Launch steuerlich
+geklärt werden.
 
 ## AGB-Zustimmung bei Inseraten
 

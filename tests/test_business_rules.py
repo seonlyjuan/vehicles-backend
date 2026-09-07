@@ -1,4 +1,8 @@
+import hashlib
+import hmac
+import time
 import unittest
+from decimal import Decimal
 from unittest.mock import patch
 
 from fastapi import HTTPException
@@ -12,6 +16,8 @@ from app.vehicles.filters import validate_filters
 from app.vehicles.fields import public_listing_fields
 from app.vehicles.lifecycle import resolve_listing_status
 from app.vehicles.schemas import ListingPublishRequest, VehicleCreate
+from app.payments.service import verify_webhook_signature
+from app.vehicles.payment_service import calculate_listing_price
 
 
 class VehicleRulesTests(unittest.TestCase):
@@ -66,6 +72,39 @@ class ProfileAndSafetyRulesTests(unittest.TestCase):
     def test_rejected_report_cannot_suspend_content(self):
         with self.assertRaises(ValidationError):
             ReportDecision(outcome="rejected", action="suspend_user", decision="Nicht bestätigt")
+
+
+class PaymentRulesTests(unittest.TestCase):
+    @patch("app.vehicles.payment_service.settings")
+    def test_vat_is_extracted_from_gross_price(self, payment_settings):
+        payment_settings.listing_fee_chf = Decimal("10.81")
+        payment_settings.vat_rate_percent = Decimal("8.1")
+        payment_settings.listing_fee_includes_vat = True
+        price = calculate_listing_price()
+        self.assertEqual(price["gross_amount"], Decimal("10.81"))
+        self.assertEqual(price["net_amount"], Decimal("10.00"))
+        self.assertEqual(price["vat_amount"], Decimal("0.81"))
+
+    @patch("app.payments.service.settings")
+    def test_webhook_signature_covers_timestamp_event_and_body(self, payment_settings):
+        payment_settings.payment_webhook_secret = "test-secret"
+        payment_settings.payment_webhook_tolerance_seconds = 300
+        body = b'{"status":"paid"}'
+        event_id = "evt-1"
+        timestamp = str(int(time.time()))
+        signed = f"{timestamp}.{event_id}.".encode("utf-8") + body
+        signature = hmac.new(b"test-secret", signed, hashlib.sha256).hexdigest()
+        verify_webhook_signature(body, event_id, timestamp, signature)
+
+        with self.assertRaises(HTTPException):
+            verify_webhook_signature(body, "evt-changed", timestamp, signature)
+
+    @patch("app.payments.service.settings")
+    def test_stale_webhook_is_rejected(self, payment_settings):
+        payment_settings.payment_webhook_secret = "test-secret"
+        payment_settings.payment_webhook_tolerance_seconds = 300
+        with self.assertRaises(HTTPException):
+            verify_webhook_signature(b"{}", "evt-1", str(int(time.time()) - 301), "invalid")
 
 
 if __name__ == "__main__":

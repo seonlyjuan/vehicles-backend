@@ -9,6 +9,7 @@ from app.legal.router import router as legal_router
 from app.safety.router import router as safety_router
 from app.moderation.router import router as moderation_router
 from app.notifications.router import router as notifications_router
+from app.payments.router import router as payments_router
 
 api_router = APIRouter()
 api_router.include_router(health_router)
@@ -20,3 +21,4 @@ api_router.include_router(legal_router)
 api_router.include_router(safety_router)
 api_router.include_router(moderation_router)
 api_router.include_router(notifications_router)
+api_router.include_router(payments_router)

@@ -1,5 +1,6 @@
 import os
 from dataclasses import dataclass
+from decimal import Decimal
 
 from dotenv import load_dotenv
 
@@ -17,7 +18,12 @@ class Settings:
     supabase_url: str | None = os.getenv("SUPABASE_URL")
     supabase_service_role_key: str | None = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
     payment_placeholder_enabled: bool = os.getenv("PAYMENT_PLACEHOLDER_ENABLED", "true").lower() == "true"
-    listing_fee_chf: float = float(os.getenv("LISTING_FEE_CHF", "0"))
+    listing_fee_chf: Decimal = Decimal(os.getenv("LISTING_FEE_CHF", "0"))
+    listing_fee_includes_vat: bool = os.getenv("LISTING_FEE_INCLUDES_VAT", "true").lower() == "true"
+    vat_rate_percent: Decimal = Decimal(os.getenv("VAT_RATE_PERCENT", "8.1"))
+    payment_webhook_secret: str | None = os.getenv("PAYMENT_WEBHOOK_SECRET")
+    payment_webhook_tolerance_seconds: int = int(os.getenv("PAYMENT_WEBHOOK_TOLERANCE_SECONDS", "300"))
+    refund_window_days: int = int(os.getenv("REFUND_WINDOW_DAYS", "14"))
     listing_duration_days: int = int(os.getenv("LISTING_DURATION_DAYS", "30"))
     redis_url: str | None = os.getenv("REDIS_URL")
     enforce_https: bool = os.getenv(
