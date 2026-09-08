@@ -1,0 +1,12 @@
+.git
+.github
+.env
+.env.*
+!.env.example
+!.env.production.example
+.venv
+node_modules
+**/__pycache__
+*.py[cod]
+*.db
+supabase/.temp

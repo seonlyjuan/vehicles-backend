@@ -62,7 +62,9 @@ class RedisRateLimiter:
     def __init__(self, url: str) -> None:
         from redis import Redis
 
-        self._client = Redis.from_url(url, decode_responses=True)
+        self._client = Redis.from_url(
+            url, decode_responses=True, socket_connect_timeout=2, socket_timeout=2,
+        )
 
     def check(self, subject: str, policy: RatePolicy, cost: int = 1) -> None:
         key = f"rate-limit:{policy.scope}:{subject}"

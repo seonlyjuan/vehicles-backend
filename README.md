@@ -1,4 +1,8 @@
 # Server lokal und im WLAN starten
+
+Deployment-Anleitung: [DEPLOYMENT.md](DEPLOYMENT.md) – Produktionsstart,
+Konfiguration, Docker, Zustandsprüfungen, Datenbankprüfung und Wartungsjob.
+
 --------------------------------------------------------------------------------
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass

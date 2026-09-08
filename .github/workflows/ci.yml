@@ -1,0 +1,51 @@
+name: Server checks
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      APP_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+          cache: pip
+      - run: python -m pip install --only-binary=:all: -r requirements.txt
+      - run: python -m pip check
+      - run: python -m unittest discover -s tests -v
+      - run: docker build -t vehicle-api:ci .
+      - name: Check production process behind a simulated trusted proxy
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker run -d --name vehicle-api-ci -p 127.0.0.1:8000:8000 \
+            -e CLIENT_ORIGIN=https://app.example.ch \
+            -e ALLOWED_HOSTS=api.example.ch \
+            -e SUPABASE_URL=https://example.supabase.co \
+            -e SUPABASE_SERVICE_ROLE_KEY=sb_secret_ci-test-only \
+            -e FORWARDED_ALLOW_IPS='*' vehicle-api:ci
+          trap 'docker logs vehicle-api-ci; docker rm -f vehicle-api-ci' EXIT
+          curl --retry 10 --retry-connrefused --retry-delay 1 --fail \
+            -H 'Host: api.example.ch' -H 'X-Forwarded-Proto: https' http://127.0.0.1:8000/health
+          test "$(curl -s -o /dev/null -w '%{http_code}' -H 'Host: api.example.ch' -H 'X-Forwarded-Proto: https' http://127.0.0.1:8000/docs)" = 404
+          test "$(curl -s -o /dev/null -w '%{http_code}' -H 'Host: api.example.ch' http://127.0.0.1:8000/health)" = 307
+  migrations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - run: npm ci
+      # Only the runner's disposable database is used; no linked project or secrets.
+      - run: npx --no-install supabase db start
+      - run: npx --no-install supabase db reset --local --no-seed --yes
+      - run: npx --no-install supabase db lint --local --level error --fail-on error
+      - if: always()
+        run: npx --no-install supabase stop --no-backup

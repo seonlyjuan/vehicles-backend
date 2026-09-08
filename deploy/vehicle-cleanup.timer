@@ -1,0 +1,11 @@
+[Unit]
+Description=Daily vehicle platform retention cleanup
+
+[Timer]
+OnCalendar=*-*-* 03:00:00 UTC
+RandomizedDelaySec=300
+Persistent=true
+Unit=vehicle-cleanup.service
+
+[Install]
+WantedBy=timers.target

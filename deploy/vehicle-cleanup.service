@@ -1,0 +1,17 @@
+[Unit]
+Description=Vehicle platform retention cleanup
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=vehicle-api
+WorkingDirectory=/opt/vehicle-api
+EnvironmentFile=/etc/vehicle-api.env
+ExecStart=/opt/vehicle-api/.venv/bin/python -m app.maintenance.cleanup
+TimeoutStartSec=1h
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+Environment=PYTHONDONTWRITEBYTECODE=1
